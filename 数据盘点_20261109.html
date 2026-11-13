@@ -1,0 +1,249 @@
+<title>暗语数据盘点</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;800&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* 布局：单栏长读，左侧细目录仅桌面显示；每个来源一张「档案卡」，样本用词典里真实会出现的样子渲染 */
+:root{
+  --bg:#f4f5f8;--panel:#ffffff;--panel2:#eceef3;--ink:#171a22;--ink2:#3c4150;--mute:#6b7184;--line:#dcdfe7;--line2:#c9cdd8;
+  --acc:#1d5f8a;--acc-bg:#e3eef7;--acc-ink:#164a6c;
+  --red:#b3261e;--red-bg:#fbe9e7;--amb:#a65b00;--amb-bg:#fff1dc;--grn:#1f6b4a;--grn-bg:#e2f3ea;--slate-bg:#e6e8ef;--slate-ink:#3f465a;
+  --serif:"Noto Serif SC","Songti SC","STSong",serif;--sans:"Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;--mono:"JetBrains Mono","SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#111318;--panel:#191c24;--panel2:#22262f;--ink:#e8eaf0;--ink2:#c3c7d2;--mute:#8e94a6;--line:#2b2f3a;--line2:#3a3f4c;--acc:#6aaedb;--acc-bg:#15283a;--acc-ink:#a9d3f0;--red:#f08a82;--red-bg:#3a1e1c;--amb:#f0b35c;--amb-bg:#3a2a12;--grn:#6cc29a;--grn-bg:#15302a;--slate-bg:#262a36;--slate-ink:#c3c7d2;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#111318;--panel:#191c24;--panel2:#22262f;--ink:#e8eaf0;--ink2:#c3c7d2;--mute:#8e94a6;--line:#2b2f3a;--line2:#3a3f4c;--acc:#6aaedb;--acc-bg:#15283a;--acc-ink:#a9d3f0;--red:#f08a82;--red-bg:#3a1e1c;--amb:#f0b35c;--amb-bg:#3a2a12;--grn:#6cc29a;--grn-bg:#15302a;--slate-bg:#262a36;--slate-ink:#c3c7d2;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.7;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 60px}
+.wrap{max-width:960px;margin:0 auto;min-width:0}
+h1{font-family:var(--serif);font-weight:800;font-size:clamp(28px,4.5vw,40px);letter-spacing:-.02em;line-height:1.2;margin:0 0 10px;text-wrap:balance}
+h2{font-family:var(--serif);font-weight:800;font-size:24px;margin:52px 0 14px;padding-top:18px;border-top:2px solid var(--ink);text-wrap:balance}
+h2 .no{font-family:var(--mono);font-size:13px;color:var(--mute);display:block;letter-spacing:.08em;margin-bottom:4px;font-weight:600}
+h3{font-size:17px;margin:26px 0 8px;font-weight:700}
+p{margin:8px 0;max-width:70ch}
+.lead{font-size:17px;color:var(--ink2);max-width:62ch}
+.meta{color:var(--mute);font-size:13px;font-family:var(--mono)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:14px 0;min-width:0}
+.card h3{margin-top:0}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.tile b{display:block;font-family:var(--mono);font-size:24px;line-height:1.1;font-variant-numeric:tabular-nums}
+.tile span{color:var(--mute);font-size:12.5px}
+.tile.red b{color:var(--red)}.tile.amb b{color:var(--amb)}.tile.grn b{color:var(--grn)}.tile.acc b{color:var(--acc)}
+.tblw{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--panel);margin:12px 0}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:560px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:var(--panel2);font-weight:600;color:var(--ink2);white-space:nowrap;font-size:12.5px}
+tr:last-child td{border-bottom:0}
+td.n{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+td.nw{white-space:nowrap}
+.b{display:inline-block;border-radius:5px;padding:0 7px;font-size:12px;line-height:20px;background:var(--panel2);border:1px solid var(--line);white-space:nowrap;vertical-align:middle}
+.b.red{background:var(--red-bg);color:var(--red);border-color:transparent}.b.amb{background:var(--amb-bg);color:var(--amb);border-color:transparent}.b.grn{background:var(--grn-bg);color:var(--grn);border-color:transparent}.b.acc{background:var(--acc-bg);color:var(--acc-ink);border-color:transparent}.b.slate{background:var(--slate-bg);color:var(--slate-ink);border-color:transparent}
+.vars{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0}
+.vars .b{font-family:var(--mono);font-size:12px}
+.stem{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;align-items:start;font-size:14px}
+.stem .k{color:var(--mute);font-size:12.5px;white-space:nowrap;padding-top:2px}
+.src{border-left:4px solid var(--acc);}
+.src .hd{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:baseline;margin-bottom:6px}
+.src .hd h3{margin:0}
+.src .hd .meta{font-size:12px}
+.sample{background:var(--panel2);border-radius:8px;padding:10px 12px;margin:8px 0;font-size:13.5px}
+.sample .t{font-weight:700;margin-bottom:2px}
+.sample .l{color:var(--mute);font-size:12px;margin-right:6px}
+.kv{display:grid;grid-template-columns:max-content 1fr;gap:4px 12px;font-size:13.5px;margin:6px 0}
+.kv dt{color:var(--mute);white-space:nowrap}.kv dd{margin:0;min-width:0}
+ul,ol{padding-left:22px;margin:6px 0}
+li{margin:3px 0}
+.idea{display:grid;grid-template-columns:1fr;gap:10px}
+.idea .card{margin:0}
+.idea .card .row{display:grid;grid-template-columns:max-content 1fr;gap:4px 12px;font-size:13.5px;margin-top:6px}
+.idea .card .row span:nth-child(odd){color:var(--mute);white-space:nowrap}
+.note{border-left:3px solid var(--amb);background:var(--amb-bg);padding:10px 14px;border-radius:0 8px 8px 0;font-size:14px;margin:12px 0}
+.note.red{border-color:var(--red);background:var(--red-bg)}
+.toc{font-size:13.5px;color:var(--mute);display:flex;flex-wrap:wrap;gap:4px 14px;margin:16px 0 0}
+.toc a{color:var(--acc-ink);text-decoration:none;border-bottom:1px solid var(--line2)}
+.toc a:hover,.toc a:focus-visible{border-bottom-color:var(--acc)}
+code{font-family:var(--mono);font-size:12.5px;background:var(--panel2);padding:1px 5px;border-radius:4px}
+@media (max-width:600px){table{min-width:480px}.stem{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:no-preference){a{transition:border-color .15s}}
+</style>
+
+<div class="wrap">
+<p class="meta">上架宝 · 数据盘点 · 2026-11-09 · 只盘数据，不改产品</p>
+<h1>暗语数据到底长什么样，能拿来做什么</h1>
+<p class="lead">这页回答三件事：「词条」和「写法」各是什么、怎么分的；现在手上九个来源每一个长什么样、带哪些字段、有多少是新的；这些数据能支撑产品往哪些方向改。所有数字都是从原始文件直接数出来的，样本是原文照抄。</p>
+<nav class="toc" aria-label="目录"><a href="#s1">1 词条与写法</a><a href="#s2">2 每条带的字段</a><a href="#s3">3 九个来源逐个看</a><a href="#s4">4 拦截词来源</a><a href="#s5">5 合起来有多少</a><a href="#s6">6 数据能改变什么</a><a href="#s7">7 数据不能做什么</a></nav>
+
+<h2 id="s1"><span class="no">01</span>「词条」和「写法」是什么</h2>
+<p>一个<b>词条</b>是一个「东西」，用正常话说出来的名字，比如「Claude 会员账号」。一个<b>写法</b>是卖家为了躲审核，真正敲进标题里的那串字，比如「克牢弟」「cld」「柯南弟」。一个词条下面挂很多写法。标题体检查的是写法，不是词条名。</p>
+<div class="card">
+<div class="stem">
+<span class="k">词条</span><span><b>Claude 3.5 Sonnet 独享</b> <span class="b red">拦截词</span> <span class="b amb">警告</span> <span class="b slate">AI 服务 · 虚拟</span></span>
+<span class="k">词干（真正的暗号）</span><span class="vars"><span class="b">克牢弟</span><span class="b">cld</span><span class="b">柯南弟</span><span class="b">小克</span><span class="b">A社</span><span class="b">c老板</span><span class="b">克劳德</span><span class="b">sonnet</span></span>
+<span class="k">卖货后缀</span><span class="vars"><span class="b">独享</span><span class="b">自用</span><span class="b">全新</span><span class="b">正品</span><span class="b">车位</span><span class="b">秒发</span><span class="b">直充</span><span class="b">学习位</span><span class="b">满血</span><span class="b">现货</span><span class="b">包邮</span><span class="b">一手</span><span class="b">包更</span><span class="b">测试号</span></span>
+<span class="k">写法 = 词干 + 后缀</span><span class="vars"><span class="b">克牢弟满血版</span><span class="b">sonnet3.5独享</span><span class="b">克牢弟3.5诚心出</span><span class="b">克牢弟3.5带教程</span><span class="b">克牢弟3.5正品</span><span class="b">克牢弟3.5学习位</span><span class="b">cld独立号</span><span class="b">克牢弟3.5稳定版</span><span class="b">…共 42 个</span></span>
+</div>
+</div>
+<p>这就是「5,082 种写法」的真相：awesome 词典给每个热门词条都配了 42 个写法，其中大半是同一个词干换不同后缀。把后缀剥掉，5,082 个写法只剩约 <b>2,223 个词干</b>。所以：</p>
+<ul>
+<li><b>词干</b>才是暗语本体，是买家搜索时会打的字，也是体检该盯的字。</li>
+<li><b>后缀</b>是通用卖货话术，自成一张表（独享、自用、全新、正品、车位、秒发、直充、学习位、满血、现货），和具体品类无关。堆叠这些词本身就是稽查信号。</li>
+<li>helper 词典没有这个问题，它的 3,322 个写法基本都是词干（艾疯、i疯、爱疯、小i、ip）。</li>
+</ul>
+<h3>现在怎么归类</h3>
+<p>每个词条有四层标签，前两层是词典作者给的，后两层是我按规则加的：</p>
+<div class="tblw"><table>
+<tr><th>层</th><th>取值</th><th>谁定的</th><th>覆盖</th><th>说明</th></tr>
+<tr><td class="nw">来源分类</td><td>AI 服务、游戏账号、手机与平板、成色描述、议价话术……共 50 多个</td><td>词典作者</td><td class="n">100%</td><td>awesome 28 类、helper 22 类，名字不统一，我只做了中文对照</td></tr>
+<tr><td class="nw">存活状态</td><td><span class="b red">拦截词</span> <span class="b amb">抽检</span> <span class="b grn">可搜</span> <span class="b">未标</span></td><td>awesome 作者</td><td class="n">143 / 388</td><td>写上就下架 / 会限流 / 平台还没盯上。helper 的词条没有这项</td></tr>
+<tr><td class="nw">虚实</td><td>虚拟商品 / 实物商品 / 交易话术</td><td>我，按来源分类映射</td><td class="n">100%</td><td>你上一轮要求的拆分。helper 的 112 条「社区补充」没有分类，按关键词猜</td></tr>
+<tr><td class="nw">政策档</td><td>HARD 剔除 / GREY 标注不给替代词 / 正常</td><td>我，沿用雷达的正则</td><td class="n">100%</td><td>HARD：色情、毒品、武器、赌博、盗号洗钱、涉未成年。GREY：假货、黑产工具、烟酒、医疗减肥、黄牛</td></tr>
+</table></div>
+
+<h2 id="s2"><span class="no">02</span>每个词条身上还带了什么</h2>
+<p>除了名字和写法，awesome 的每条都带七段文字和两个数字，helper 的一个都没有。合并后 388 条里只有 <b>143 条</b>是「满配」，其余 245 条只有名字加写法。</p>
+<div class="tblw"><table>
+<tr><th>字段</th><th>原文举例（词条：Claude 官方会员订阅与代阅）</th><th>有的条数</th><th>现在上架宝用在哪</th></tr>
+<tr><td class="nw">指什么 explanation</td><td>指 Anthropic 官方旗舰大模型 Claude Pro/Team 订阅会员、充值直充与企业 API 额度代付。</td><td class="n">143</td><td>词条详情</td></tr>
+<tr><td class="nw">卖家为什么这么写 sellerIntent</td><td>卖家通过谐音‘克劳格’和错别字‘代阅/冲值’躲避平台对境外虚拟会员充值的秒级下架封禁，多为海外住宅卡绑定或礼品卡直充。</td><td class="n">143</td><td>词条详情</td></tr>
+<tr><td class="nw">买家建议 buyerAdvice</td><td>买家在闲鱼搜货时，直接在搜索框输入【克劳格会员】或【克劳德代阅】即可看到全量在售真实卖家。务必确认是否质保防封……</td><td class="n">143</td><td>词条详情（叫「买家视角」）</td></tr>
+<tr><td class="nw">卖家建议 sellerAdvice</td><td>标题严禁带‘Claude/充值/订阅’，建议发布描述写‘克劳格会员代阅，支持自己账号直冲，质保稳定’以通过AI文本审核。</td><td class="n">143</td><td>词条详情（高危和灰色不显示）</td></tr>
+<tr><td class="nw">接替词 successorSlang</td><td>克劳格会员、克劳德代阅、克劳德冲值、柯南弟代阅、cld代充</td><td class="n">143</td><td>词条「可换的写法」（高危和灰色不给）</td></tr>
+<tr><td class="nw">现状 activeTrend</td><td>闲鱼系统对【Claude/克劳德/订阅/充值】等关键词实施全量精准拦截下架。民间商家利用谐音【克劳格】与错别字【代阅/冲值】作为最新避检搜索暗号……</td><td class="n">143</td><td>词条详情</td></tr>
+<tr><td class="nw">平台 platforms</td><td>闲鱼、转转、小红书</td><td class="n">143</td><td>词条详情一行小字</td></tr>
+<tr><td class="nw">风险 riskLevel</td><td>danger（高危）/ warning（警告）/ safe（一般）</td><td class="n">143</td><td>表格一列</td></tr>
+<tr><td class="nw">票数 upvotes / downvotes</td><td>386 赞 / 2 踩</td><td class="n">143</td><td><b>没用上</b></td></tr>
+</table></div>
+<div class="note">注意上面「卖家建议」和「接替词」的原文：词典作者的立场是教卖家怎么躲审核。你的产品立场是帮人避开侵权和违规，所以这两段只对「一般」风险且不涉灰色的词条显示，其余不给。这条线要不要动，是规划层面的决定。</div>
+
+<h2 id="s3"><span class="no">03</span>九个来源逐个看</h2>
+<p>前两个已经并入上架宝，后七个只下载了原始数据，还没并。每个来源下面的样本都是原文。</p>
+
+<div class="card src">
+<div class="hd"><h3>1 · awesome-chinese-secondhand-slang</h3><span class="meta">GitHub Domainsun · MIT · 数据文件最后更新 2026-10-19</span><span class="b grn">已并入</span></div>
+<div class="grid"><div class="tile"><b>149</b><span>词条</span></div><div class="tile"><b>5,082</b><span>写法（约 2,223 词干）</span></div><div class="tile"><b>15</b><span>字段，全部满配</span></div><div class="tile"><b>28</b><span>分类</span></div></div>
+<p>覆盖闲鱼、转转、小红书。AI 服务、数字资产、虚拟资源、游戏账号、学术代写、网络工具、社交流量、涨粉引流、小红书矩阵、票券卡密是虚拟；手机、电脑硬件、相机、谷圈、奢侈品、潮牌、名表、球鞋、宠物植物、美妆、车辆是实物；成色、交易话术、站外引流、通用话术是话术。每条有存活状态、风险、票数和七段文字。README 自称 114 主题 4,569 变体，是旧数字。</p>
+<div class="sample"><div class="t">莫桑钻 / 培育钻石冒充天然南非真钻 <span class="b grn">可搜</span> <span class="b">一般</span> <span class="b slate">名表与珠宝 · 实物</span> <span class="b">499 票</span></div><span class="l">写法</span>莫桑石可刀、莫桑石秒发、莫桑石包更、莫桑石包邮到家、莫桑石学习位、莫桑石带原盒…<br><span class="l">指什么</span>指实验室人工合成的人造碳化硅（莫桑石）或人造金刚石（培育钻）替代天然钻石。<br><span class="l">如实卖怎么写</span>诚恳标注“高品质莫桑石/培育钻，璀璨百搭”，不做虚假宣传。</div>
+<div class="sample"><div class="t">事故车掩盖修复 (结构件切割变形) <span class="b red">拦截词</span> <span class="b red">高危</span> <span class="b slate">交易话术 · 话术</span></div><span class="l">写法</span>重大事故隐瞒、事故车防封版、事故车现货、事故车、事故车秒发、事故车车位…<br><span class="l">买家建议</span>自备漆膜仪检测全车漆面厚度（超过200微米多有钣金腻子，超过400微米必是大修动刀）……</div>
+<p class="meta">质量提醒：写法里大量「词干 + 后缀」凑数；存活状态是作者判断，没有日期；实物类和虚拟商品工具无关，占了一半。</p>
+</div>
+
+<div class="card src">
+<div class="hd"><h3>2 · xianyu-slang-helper（闲鱼词典 Chrome 插件）</h3><span class="meta">GitHub memos-im · 仓库里没有 LICENSE 文件 · 数据最后更新 2026-10-18</span><span class="b grn">已并入</span></div>
+<div class="grid"><div class="tile"><b>362</b><span>词条</span></div><div class="tile"><b>3,322</b><span>写法</span></div><div class="tile"><b>22</b><span>分类</span></div><div class="tile"><b>2</b><span>字段：只有名字和写法</span></div></div>
+<p>分类：电子产品 22、奢侈品 12、烟酒 9、球鞋潮牌 9、潮玩盲盒 8、谷圈 28、游戏账号 28、AI 服务 15、互联网 15、虚拟商品 10、账号交易 7、刷单任务 7、疑似非商品交易 5、成色 16、议价 11、防坑 8、渠道 5、营销 5、交易 21、卡牌 5、站外引流 4，加「社区补充」112 条。社区补充是 awesome 词条的镜像，按名字并进去了，不重复建条。README 写的 250 条 896 变体是插件打包版的数字。</p>
+<div class="sample"><div class="t">iPhone <span class="b slate">电子产品</span></div><span class="l">写法</span>艾疯、i疯、爱疯、小i、ip</div>
+<div class="sample"><div class="t">AI API 中转站(转发服务) <span class="b slate">AI 服务 · 虚拟</span> <span class="b">未标状态</span></div><span class="l">写法</span>中转站、中转、API中转、代理站、镜像站、oneapi、new-api、newapi、二代码<br><span class="l">说明</span><i style="color:var(--mute)">没有。helper 的词条都没有说明、状态、风险。</i></div>
+<p class="meta">质量提醒：写法干净、无凑数，但没有任何解释；仓库未声明许可，严格说不能当 MIT 用，上架宝页脚现在写的「MIT」要改。</p>
+</div>
+
+<div class="card src">
+<div class="hd"><h3>3 · SearchSharp（search-sharp.com）</h3><span class="meta">众包网站 · 公开只读接口 · 无许可声明 · 抓取 2026-11-09</span><span class="b amb">未并入</span></div>
+<div class="grid"><div class="tile"><b>383</b><span>商品名</span></div><div class="tile"><b>1,012</b><span>带投票的写法</span></div><div class="tile acc"><b>317</b><span>名称不在上架宝</span></div><div class="tile"><b>200</b><span>净赞 ≥3 的新写法</span></div></div>
+<p>结构和词典不同：一个「商品」下面是一串「叫法」，每个叫法有赞和踩。没有分类（全是「用户添加」），没有解释。helper 的作者也从这里抓词，抓完经过人工和政策过滤才并入，所以 helper 里已经有它的一部分。</p>
+<div class="sample"><div class="t">gemini pro</div><span class="l">别名</span>双子座 pro、美国豆包<br><span class="l">叫法（赞/踩）</span>哈基米 118/5 · 美国豆包 88/4 · 哥迷你 7/1 · 给秘密 6/2 · 基迷你 4/0 · 杰米奈 4/0</div>
+<div class="sample"><div class="t">vpn</div><span class="l">叫法（赞/踩）</span>梯子 79/3 · 科学上网 42/3 · 翻墙 29/2 · 魔法 29/2 · 轻功 4/1 · 梯云踪 3/0 <span class="b red">翻墙，红线题材</span></div>
+<div class="sample"><div class="t">失败</div><span class="l">叫法（赞/踩）</span>基本成功 108/0 · 成功他妈 10/0 · 成功之母 1/0 <span class="b">这是玩梗，不是商品</span></div>
+<p class="meta">质量提醒：票数是「这个叫法大家认不认」，不是搜索量。玩梗词多（失败、余承东、蔡徐坤、圣经、上班），虚实靠规则分不准，需要人过一遍。HARD 命中 3 条：外挂、LSD、楼凤。</p>
+</div>
+
+<div class="card src">
+<div class="hd"><h3>4 · xianyuheihua.com（闲鱼黑话词典）</h3><span class="meta">众包网站 · 公开只读接口 · 无许可声明 · 抓取 2026-11-09</span><span class="b amb">未并入</span></div>
+<div class="grid"><div class="tile"><b>208</b><span>词条</span></div><div class="tile"><b>10</b><span>分类</span></div><div class="tile acc"><b>129</b><span>不在上架宝</span></div><div class="tile red"><b>8</b><span>HARD 命中，含「特服暗示」7 条</span></div></div>
+<p>分类：商品名称 83、话术暗示 52、交易规则 33、品类谐音 18、特服暗示 7、账号与身份 6、商品成色 5、字母缩写 2、私域引导 1、图片暗号 1。每条有含义、点赞、投稿时间（最早 2026-08-31）。结构是反过来的：词条名是暗语本身，含义才是正常名。</p>
+<div class="sample"><div class="t">Tibo牌洗衣粉 <span class="b slate">商品名称</span> <span class="b">74 赞 22 踩</span> <span class="meta">2026-09-22</span></div><span class="l">含义</span>codex充值</div>
+<div class="sample"><div class="t">gogo牌熊猫公仔 <span class="b slate">商品名称</span> <span class="b">15 赞 1 踩</span></div><span class="l">含义</span>英国giffgaff实体卡或相关<br><span class="l">同义</span>黄色信封、英伦风明信片、+44信封、漂洋过海的44封信、GG卡</div>
+<div class="sample"><div class="t">我是学生 <span class="b slate">交易规则</span> <span class="b">123 赞 14 踩</span></div><span class="l">含义</span>如果在聊天中出现，意思是想白嫖，让你免费送给他</div>
+<div class="sample"><div class="t">支持专柜验货 <span class="b slate">交易规则</span> <span class="b">33 赞 1 踩</span></div><span class="l">含义</span>假货</div>
+<p class="meta">质量提醒：投稿制，含义一句话，有的是段子。anyu.luckhub.cc 站上 191 个「slang-comp」页面就是把这里的内容镜像过去，不要重复算。</p>
+</div>
+
+<div class="card src">
+<div class="hd"><h3>5 · anyu.luckhub.cc 站内独有词条</h3><span class="meta">awesome 作者的网站 · 不在 MIT 仓库里 · 13 条可读，7 条 404 · 抓取 2026-11-09</span><span class="b amb">未并入</span></div>
+<div class="grid"><div class="tile"><b>13</b><span>词条</span></div><div class="tile"><b>117</b><span>写法</span></div><div class="tile red"><b>4</b><span>作者标「高危风控词」</span></div><div class="tile"><b>9</b><span>字段，和 awesome 一样满配</span></div></div>
+<p>题材：USDT 换汇、VPN 机场、PT 兼职、PT 站邀请码（作者标高危）；SheerID 代过学生认证、铂金首饰、VPS 转让、通达信指标、摸摸机避坑、IPTV 直播源（需留心）；美区 Apple ID、Pixel 刷机、拼团（合规）。</p>
+<div class="sample"><div class="t">U代付与虚拟硬币交易暗号 (USDT / 泰达币 / 冷钱包 / 闲鱼U换R避坑) <span class="b red">高危风控词</span> <span class="b grn">现行可用</span></div><span class="l">写法</span>usdt、泰达币、U代付、U换R、虚拟硬币、冷钱包、加密U、跑U<br><span class="l">指什么</span>USDT 泰达币等加密货币在二手平台上的地下兑换黑话。常被用于黑灰产洗钱、涉诈资金漂白。<br><span class="l">卖家建议</span>绝对禁止发布任何虚拟货币交易信息！一经发现平台立即移交公安机关处理。</div>
+<p class="meta">质量提醒：雷达现有的 HARD 规则抓不到翻墙和虚拟币，这两类要补规则。你已经定了：这类全部收进来，放工具箱做警示，不进流程。</p>
+</div>
+
+<div class="card src">
+<div class="hd"><h3>6 · xianyu-slang-translator（闲鱼黑话翻译器）</h3><span class="meta">GitHub xianfanhuang · MIT · 2026-07</span><span class="b amb">未并入</span></div>
+<div class="grid"><div class="tile"><b>80</b><span>词条</span></div><div class="tile"><b>6</b><span>分类，每类一个风险级</span></div><div class="tile acc"><b>27</b><span>不在上架宝</span></div><div class="tile"><b>0</b><span>写法：只有名字和一句释义</span></div></div>
+<p>成色描述 12、砍价议价 12、交易方式 10、身份暗示 9、品类谐音 27、高危警示 10。价值在释义，不在写法。</p>
+<div class="sample"><div class="t">小刀 <span class="b slate">砍价议价 · 低风险</span></div><span class="l">释义</span>接受小幅度砍价，议价空间约5%-15%</div>
+<div class="sample"><div class="t">只接受面交 <span class="b slate">高危警示 · 高风险</span></div><span class="l">释义</span>极高诈骗风险，商品大概率有问题</div>
+</div>
+
+<div class="card src">
+<div class="hd"><h3>7 · xianyu-heihua（可搜索的闲鱼黑话）</h3><span class="meta">GitHub ImAi10086 · MIT · 2026-08</span><span class="b amb">未并入</span></div>
+<div class="grid"><div class="tile"><b>28</b><span>词条</span></div><div class="tile"><b>57</b><span>别名</span></div><div class="tile acc"><b>17</b><span>不在上架宝</span></div><div class="tile"><b>4</b><span>文字字段：翻译、信号、下一步、风险</span></div></div>
+<p>量最小，但字段设计最好：每条告诉买家「它可能意味着什么、为什么值得注意、下一步该问什么」。这正是客服和商品问答需要的口径。</p>
+<div class="sample"><div class="t">私下交易 <span class="b slate">风险提醒</span> <span class="b red">高</span></div><span class="l">别名</span>私下转、加微信交易、脱离平台<br><span class="l">它在说什么</span>卖家希望绕开平台，在其他渠道收款或沟通。<br><span class="l">为什么要注意</span>平台记录、争议处理和对方身份都更难核实。<br><span class="l">下一步</span>不私下转账，回到平台确认交易；对方坚持就放弃。</div>
+</div>
+
+<div class="card src">
+<div class="hd"><h3>8 · gaoqian2580.com 工具页</h3><span class="meta">聚合站 · 页面内嵌数据 · 无来源与许可声明 · 抓取 2026-11-09</span><span class="b amb">未并入</span></div>
+<div class="grid"><div class="tile"><b>90</b><span>词条</span></div><div class="tile"><b>618</b><span>别名</span></div><div class="tile acc"><b>513</b><span>别名不在上架宝</span></div><div class="tile"><b>7</b><span>分类</span></div></div>
+<p>砍价与交易 18、手机数码 18、AI 与会员 18、谷圈 10、游戏主机 10、防封暗语 10、潮牌美妆 6。别名是「搜索替代词」思路，不是暗语解释。</p>
+<div class="sample"><div class="t">屠龙刀 / 大刀 <span class="b slate">砍价与交易</span></div><span class="l">别名</span>大刀、砍半、骨折价、离谱出价、对半砍、关公刀、开局对半砍、白嫖党出价</div>
+<p class="meta">质量提醒：带广告的聚合站，不写数据从哪来。「3060 显卡」「尼康 Z5」这类是商品名不是暗语。可并入但要标「来源不明」。</p>
+</div>
+
+<div class="card src">
+<div class="hd"><h3>9 · 只能人工摘的</h3><span class="meta">无结构文本</span><span class="b">不建议</span></div>
+<p>helper README 列的知乎、Linux.do、Reddit r/goofish 帖子（helper 已消化）；X 上的《闲鱼黑话大全》长文；芊羽Wing 说要开源的词典（未开源）；闲鱼规则中心（没有机器可读的词表）。</p>
+</div>
+
+<h2 id="s4"><span class="no">04</span>拦截词的来源</h2>
+<p>拦截词和暗语是两回事：暗语是卖家躲审核的写法，拦截词是平台和广告法明令不能写的词。上架宝现在有 174 个，三组：售假与版权高频词（红灯）、广告法极限词、系统稽查触发词。新找到三个小红书违禁词库，口径不同，不能整体照搬。</p>
+<div class="tblw"><table>
+<tr><th>来源</th><th>规模</th><th>长什么样</th><th>新词</th><th>判断</th></tr>
+<tr><td class="nw">bonniegeng-max / 小红书免费课程证书违禁词<br><span class="meta">MIT · 2026-10</span></td><td class="n">29 极限词 + 8 组实测词</td><td>白嫖（9/12 两次实测限流）、0元 / ¥0、免费出现 2 次以上、「官方+免费+拿证」连用、「答案+PDF+主页群」、LinkedIn / GitHub / 公众号平台名。每个词有级别 P0/P1/P2、触发场景、替代、入库日期</td><td class="n">11 + 8 组</td><td>最贴虚拟商品。作者写了入库出库规则，不乱收</td></tr>
+<tr><td class="nw">sleeppig0314 / xhs-compliance wordlib.json<br><span class="meta">无许可 · 2026-05</span></td><td class="n">140 词，6 行业</td><td>通用 71：保证、一定、绝不、首创、史无前例、最好用、最有效、vx、加我、私信我、二维码、看评论区；教育 16：一次通关、不过退款、官方授权、速成、零门槛、必考。每词带替换词和风险类</td><td class="n">104</td><td>取通用加教育两组，美妆医疗食品不要；「一定」「必须」「完全」这类常用词剔掉</td></tr>
+<tr><td class="nw">wanglin1111111 / 小红书违禁词<br><span class="meta">MIT · 2026-11</span></td><td class="n">72 词</td><td>按首字分：含「绝」12 个（绝对、绝佳、绝望…）、含「一」11 个（一次、一起、一定、一对一…）、含「最」「无」「独」「极」</td><td class="n">58</td><td>只取极限词。「一起」「一次」「升级」「高级」全算违禁会大量误杀</td></tr>
+<tr><td class="nw">CCCpan、wordscheck、funNLP 等</td><td class="n">—</td><td>在线接口客户端，或几万词的政治色情敏感词库</td><td class="n">—</td><td>离线拿不到，或与产品无关</td></tr>
+</table></div>
+
+<h2 id="s5"><span class="no">05</span>合起来有多少</h2>
+<div class="grid">
+<div class="tile"><b>388</b><span>词条 · 现在上架宝</span></div><div class="tile"><b>5,590</b><span>写法 · 现在上架宝</span></div><div class="tile acc"><b>约 900</b><span>词条 · 七个来源全并后</span></div><div class="tile acc"><b>6,500+</b><span>写法 · 全并后</span></div>
+</div>
+<div class="tblw"><table>
+<tr><th>维度</th><th>虚拟商品</th><th>实物商品</th><th>交易话术</th><th>合计</th></tr>
+<tr><td>词条（现在）</td><td class="n">147</td><td class="n">155</td><td class="n">86</td><td class="n">388</td></tr>
+<tr><td>写法（现在）</td><td class="n">2,170</td><td class="n">2,501</td><td class="n">919</td><td class="n">5,590</td></tr>
+<tr><td>其中 <span class="b red">拦截词</span></td><td class="n">14</td><td class="n">13</td><td class="n">6</td><td class="n">33</td></tr>
+<tr><td>其中 <span class="b amb">抽检</span></td><td class="n">13</td><td class="n">13</td><td class="n">0</td><td class="n">26</td></tr>
+<tr><td>其中 <span class="b grn">可搜</span></td><td class="n">35</td><td class="n">38</td><td class="n">11</td><td class="n">84</td></tr>
+<tr><td>未标状态（helper 来的）</td><td class="n">85</td><td class="n">91</td><td class="n">69</td><td class="n">245</td></tr>
+<tr><td>灰色题材（保留、不给替代词）</td><td colspan="3">假货仿品 12 · 黑产工具 11 · 烟酒 9 · 医疗减肥与违禁品 4 · 黄牛代抢 3</td><td class="n">39</td></tr>
+<tr><td>红线题材（现已剔除 6，候选来源再加约 17）</td><td colspan="3">色情服务、洗钱代充、翻墙、虚拟币、特服暗示、外挂、LSD、楼凤…</td><td class="n">约 23</td></tr>
+</table></div>
+<p>和虚拟商品直接相关的只有 147 条，加上候选来源里的 AI、会员、账号、课程类，大概到 250 条。实物 155 条对一个虚拟商品工具是背景资料，不是主菜。</p>
+
+<h2 id="s6"><span class="no">06</span>这些数据能让产品改成什么样</h2>
+<p>按「数据里有什么」反推「产品能多做什么」。每条写清依据、动作、现在有没有。</p>
+<div class="idea">
+<div class="card"><h3>把「写法」拆成词干和后缀两张表</h3><div class="row"><span>依据</span><span>5,082 写法里约 2,860 个是词干加后缀凑的；后缀只有几十个（独享、自用、全新、正品、车位、秒发、直充、学习位、满血、现货…）</span><span>动作</span><span>词典只展示词干，看着清爽；后缀单独成「卖货话术表」，体检时「同一标题堆 3 个以上后缀」直接提示稽查风险；素材包生成标题时最多放 1 个</span><span>现在</span><span>没有。词典按原始写法展示，42 个写法看着像 42 个暗号</span></div></div>
+<div class="card"><h3>「买家会怎么搜」变成上新品的一步</h3><div class="row"><span>依据</span><span>awesome 84 条「可搜」状态的词；SearchSharp 1,012 个带赞踩的叫法；xianyuheihua 208 条带点赞。三处合起来是「大家认哪个叫法」的投票</span><span>动作</span><span>做素材包时，先给出这个品类买家在用的搜索词和认可度，再决定标题里放哪个。只放「可搜」且不涉灰色的词</span><span>现在</span><span>行话词典是人工 86 条，和这些数据不连</span></div></div>
+<div class="card"><h3>找方向页加「审核强度」</h3><div class="row"><span>依据</span><span>每个分类里拦截 / 抽检 / 可搜的比例不一样：AI 服务拦截最多，成色话术几乎都可搜</span><span>动作</span><span>类目卡上多一格「这个类目平台盯得多紧」，用三色比例条表示，点进去看是哪些词被拦</span><span>现在</span><span>找方向只有版权名单的风险面和导入数据的机会面，没有审核维度</span></div></div>
+<div class="card"><h3>「平台封了什么、民间改成了什么」做成时间线</h3><div class="row"><span>依据</span><span>143 条有「现状」和「接替词」：原词被拦 → 改谐音 → 再被拦 → 再改</span><span>动作</span><span>词条详情里画成链条，让人一眼看懂这个品类的审核是怎么升级的。只对一般风险词显示接替词，灰色和高危只显示链条不显示新词</span><span>现在</span><span>「可换的写法」一行文字，看不出先后</span></div></div>
+<div class="card"><h3>「如实卖怎么写」直接进素材包</h3><div class="row"><span>依据</span><span>143 条「卖家建议」里有一部分是正经的如实描述写法，例如莫桑石那条：诚恳标注“高品质莫桑石/培育钻”</span><span>动作</span><span>素材包的说明模板引用对应词条的如实写法；但要先人工筛一遍，因为同一字段里也有教人躲审核的句子</span><span>现在</span><span>词条详情里显示，和素材包不连</span></div></div>
+<div class="card"><h3>新工具：聊天预警（买家话术识别）</h3><div class="row"><span>依据</span><span>交易话术 86 条 + xianyuheihua 话术暗示 52 条 + 交易规则 33 条 + heihua 28 条「下一步该问什么」。全是买家或卖家聊天里会出现的句子：我是学生、到手刀、只接受面交、支持专柜验货</span><span>动作</span><span>贴一段聊天记录，标出套路句，给「下一步怎么回」。这是客服场景，和上架无关，但数据已经够</span><span>现在</span><span>没有</span></div></div>
+<div class="card"><h3>工具箱：红线警示页</h3><div class="row"><span>依据</span><span>六大 HARD 题材现剔除 6 条，候选来源再加约 17 条，含特服暗示 7 条、翻墙、虚拟币、外挂、楼凤</span><span>动作</span><span>你已定：全部收进来，放工具箱单独一页，标题材、后果、来源，不进体检不给替代词。补三条规则：翻墙节点、虚拟币换汇、代过认证</span><span>现在</span><span>剔除后就丢了，用户看不到为什么没有</span></div></div>
+<div class="card"><h3>拦截词表按「我卖的是什么」切</h3><div class="row"><span>依据</span><span>bonnie 的实测限流词全是课程 / 证书 / 资料场景；sleeppig 分行业；现有 174 词是通用</span><span>动作</span><span>新开「课程资料类实测限流词」一组，带实测日期和平台；体检时按用户选的类目加载对应组，而不是一张大表</span><span>现在</span><span>三组通用词，不分类目</span></div></div>
+<div class="card"><h3>规则矩阵用真实数据代替手写</h3><div class="row"><span>依据</span><span>143 条带平台标签：闲鱼 143、转转 139、小红书 124、抖音 1</span><span>动作</span><span>「一条标题四个平台」那页，每个平台列出这个词在该平台的状态，而不是手写的通用说明</span><span>现在</span><span>规则矩阵是我手写的常识，标注待核</span></div></div>
+<div class="card"><h3>新词雷达</h3><div class="row"><span>依据</span><span>xianyuheihua 每条有投稿时间；SearchSharp 接口按新到旧排；两个仓库有 commit 日期</span><span>动作</span><span>每次重建时和上一版比对，首页「今天的数据」多一行「本月新出现的暗语 N 条」。要定期重新抓取，不是实时</span><span>现在</span><span>名单有「本版新进」，暗语没有</span></div></div>
+<div class="card"><h3>待核清单</h3><div class="row"><span>依据</span><span>245 条没有说明；SearchSharp 383 条虚实靠猜；众包低票词真假不明</span><span>动作</span><span>词典里标「待核」，做一张给你或志愿者过的清单，核一条亮一条，和「回流记录」合并成同一套流程</span><span>现在</span><span>没有</span></div></div>
+<div class="card"><h3>实物商品要不要留</h3><div class="row"><span>依据</span><span>155 条实物词条占词典四成，和虚拟商品工具的用户无关</span><span>动作</span><span>二选一：留着作背景资料但从默认视图隐藏；或整体不进上架宝，只留在构建数据里。这是定位问题，不是数据问题</span><span>现在</span><span>和虚拟并列展示</span></div></div>
+</div>
+
+<h2 id="s7"><span class="no">07</span>数据不能做什么</h2>
+<ul>
+<li><b>没有搜索量。</b>赞踩是词典用户的投票，不是闲鱼的搜索数据。只能说「大家认这个叫法」，不能说「搜这个词的人多」。</li>
+<li><b>状态没有日期。</b>awesome 的拦截 / 抽检 / 可搜是作者写入时的判断，只能用仓库 commit 日期代替。两期比对才能说「变了」。</li>
+<li><b>245 条没有解释。</b>helper 来的词只有名字和写法，详情页是空的。</li>
+<li><b>众包来源没有许可。</b>SearchSharp、xianyuheihua、gaoqian 三个网站都没写数据许可；helper 仓库没有 LICENSE 文件。做公开产品前要么去问作者，要么只用作内部参考并写明来源。</li>
+<li><b>作者立场和你不同。</b>awesome 的「卖家建议」「接替词」是教人躲审核的。要用它的解释和买家建议，但对灰色和高危词不转述它的躲法。</li>
+<li><b>红线词的写法展示要克制。</b>工具箱警示页列题材、名称和后果就够了，大段列写法等于给人教程。</li>
+</ul>
+<p class="meta">原始数据副本：/Users/ys/kuaitu/上架宝/build/sources/ 与 build/sources/candidates/，附抓取说明。本页同目录保存为 数据盘点_20261109.html。</p>
+</div>

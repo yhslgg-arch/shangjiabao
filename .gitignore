@@ -1,0 +1,14 @@
+# 密钥和本机记录，绝对不进仓库
+keys.local.js
+history.local.js
+# 别人的商品素材、生成过的图片
+同行商品/
+生成图片找回/
+# 构建和打包产物、截图、备份
+dist/
+skill/shangjiabao/assets/
+build/shots*/
+build/v2_backup/
+build/__pycache__/
+__pycache__/
+.DS_Store

@@ -1,0 +1,13 @@
+import { chromium } from '/Users/ys/.claude/skills/ljg-card/node_modules/playwright/index.mjs';
+const file = 'file:///Users/ys/kuaitu/上架宝/index.html'; const dir = '/Users/ys/kuaitu/上架宝/build/shots2';
+const browser = await chromium.launch(); const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+const errors = []; page.on('pageerror', e => errors.push('pageerror: ' + e.message)); page.on('console', m => { if (m.type() === 'error') errors.push('console: ' + m.text()); });
+await page.goto(file + '#p=lib&tab=slang'); await page.waitForTimeout(300);
+await page.type('#sq', '网盘', { delay: 30 }); await page.waitForTimeout(500);
+console.log('rows after typing', await page.$$eval('table.dict tbody tr', r => r.length), 'focused', await page.evaluate(() => document.activeElement && document.activeElement.id), 'hash', await page.evaluate(() => location.hash));
+await page.fill('#sq', ''); await page.waitForTimeout(400);
+const tbl = await page.$('table.dict'); await tbl.scrollIntoViewIfNeeded(); await page.screenshot({ path: `${dir}/n-slang-table.png`, fullPage: false });
+await page.goto(file + '#p=lib&tab=slang&sk=physical&ss=killed'); await page.waitForTimeout(300); const t2 = await page.$('table.dict'); await t2.scrollIntoViewIfNeeded(); await page.screenshot({ path: `${dir}/o-slang-physical-killed.png`, fullPage: false });
+await page.goto(file + '#p=lib&lq=%E7%B2%89'); await page.waitForTimeout(300); await page.type('#lq', '笔', { delay: 30 }); await page.waitForTimeout(500); console.log('list rows', await page.$$eval('tbody tr', r => r.length), 'focused', await page.evaluate(() => document.activeElement.id));
+await page.setViewportSize({ width: 390, height: 844 }); await page.goto(file + '#p=lib&tab=slang'); await page.waitForTimeout(300); await page.screenshot({ path: `${dir}/p-mobile-slang.png`, fullPage: false });
+console.log('errors', errors); await browser.close();

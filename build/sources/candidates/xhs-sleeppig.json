@@ -1,0 +1,243 @@
+{
+  "version": "2.0",
+  "updated": "2026-05-16",
+  "description": "小红书违禁词库 JSON 版，支持 API 导入",
+
+  "universal": {
+    "description": "通用禁词（所有行业）",
+    "absolute": {
+      "description": "绝对化用语",
+      "words": [
+        {"word": "第一", "replace": "领先 / 名列前茅", "risk": "absolute"},
+        {"word": "国家级", "replace": "知名 / 头部", "risk": "absolute"},
+        {"word": "最高级", "replace": "顶尖 / 尖端", "risk": "absolute"},
+        {"word": "最佳", "replace": "优选 / 推荐", "risk": "absolute"},
+        {"word": "最优秀", "replace": "出色 / 卓越", "risk": "absolute"},
+        {"word": "最好", "replace": "很棒 / 出众", "risk": "absolute"},
+        {"word": "最大", "replace": "领先 / 突出", "risk": "absolute"},
+        {"word": "极致", "replace": "出色 / 优秀", "risk": "absolute"},
+        {"word": "顶级", "replace": "高端 / 优质", "risk": "absolute"},
+        {"word": "顶尖", "replace": "领先 / 尖端", "risk": "absolute"},
+        {"word": "首创", "replace": "创新 / 先导", "risk": "absolute"},
+        {"word": "史无前例", "replace": "前所未有 / 独特", "risk": "absolute"},
+        {"word": "前无古人", "replace": "独特 / 开创性", "risk": "absolute"},
+        {"word": "100%", "replace": "高达 / 超过9成", "risk": "absolute"},
+        {"word": "完全", "replace": "基本 / 接近", "risk": "absolute"},
+        {"word": "彻底", "replace": "基本 / 大幅", "risk": "absolute"},
+        {"word": "保证", "replace": "致力于 / 目标是", "risk": "absolute"},
+        {"word": "绝不", "replace": "一般不会", "risk": "absolute"},
+        {"word": "绝对", "replace": "通常 / 基本", "risk": "absolute"},
+        {"word": "全面", "replace": "很大程度", "risk": "absolute"},
+        {"word": "永久", "replace": "长期 / 持久", "risk": "absolute"},
+        {"word": "终身", "replace": "长期 / 全程", "risk": "absolute"},
+        {"word": "一定", "replace": "往往 / 有可能", "risk": "absolute"},
+        {"word": "必须", "replace": "建议 / 推荐", "risk": "absolute"}
+      ]
+    },
+    "false_promise": {
+      "description": "虚假承诺类",
+      "words": [
+        {"word": "稳赚", "replace": "收益可观", "risk": "false_promise"},
+        {"word": "保本", "replace": "风险可控", "risk": "false_promise"},
+        {"word": "必涨", "replace": "有上涨潜力", "risk": "false_promise"},
+        {"word": "一定赚钱", "replace": "有盈利机会", "risk": "false_promise"},
+        {"word": "刚性兑付", "replace": "承诺不受支持", "risk": "false_promise"},
+        {"word": "一天见效", "replace": "一段时间后可见改善", "risk": "false_promise"},
+        {"word": "三天美白", "replace": "一周后皮肤提亮", "risk": "false_promise"},
+        {"word": "一周祛斑", "replace": "坚持使用有改善", "risk": "false_promise"},
+        {"word": "永久脱毛", "replace": "减少毛发量", "risk": "false_promise"},
+        {"word": "包过", "replace": "通过率高", "risk": "false_promise"},
+        {"word": "不过退款", "replace": "不过可重修", "risk": "false_promise"},
+        {"word": "一次通关", "replace": "高效学习方案", "risk": "false_promise"},
+        {"word": "零风险", "replace": "低风险", "risk": "false_promise"},
+        {"word": "零门槛", "replace": "入门友好", "risk": "false_promise"},
+        {"word": "暴富", "replace": "增加收入", "risk": "false_promise"},
+        {"word": "翻倍", "replace": "有较大涨幅", "risk": "false_promise"},
+        {"word": "天天涨停", "replace": "表现强劲", "risk": "false_promise"}
+      ]
+    },
+    "false_claim": {
+      "description": "虚假宣传类",
+      "words": [
+        {"word": "纯天然", "replace": "成分温和", "risk": "false_claim"},
+        {"word": "纯植物", "replace": "植物成分", "risk": "false_claim"},
+        {"word": "无添加", "replace": "少添加", "risk": "false_claim"},
+        {"word": "无副作用", "replace": "反馈良好", "risk": "false_claim"},
+        {"word": "无刺激", "replace": "温和配方", "risk": "false_claim"},
+        {"word": "立即见效", "replace": "即时感受", "risk": "false_claim"},
+        {"word": "马上变好", "replace": "使用后有改善", "risk": "false_claim"},
+        {"word": "一秒学会", "replace": "简单易学", "risk": "false_claim"},
+        {"word": "无需基础", "replace": "入门友好", "risk": "false_claim"}
+      ]
+    },
+    "drain": {
+      "description": "导流相关（平台禁止）",
+      "words": [
+        {"word": "微信", "replace": "绿泡泡（间接）", "risk": "drain"},
+        {"word": "vx", "replace": "v（间接）", "risk": "drain"},
+        {"word": "加我", "replace": "私信", "risk": "drain"},
+        {"word": "私信我", "replace": "评论区见", "risk": "drain"},
+        {"word": "看评论区", "replace": "评论区", "risk": "drain"},
+        {"word": "二维码", "replace": "私信获取", "risk": "drain"},
+        {"word": "连接", "replace": "私信", "risk": "drain"},
+        {"word": "跳转", "replace": "私信", "risk": "drain"}
+      ],
+      "patterns": [
+        "wechat", "weixin", "VX", "v❤️", "v ✉️", "加我", "看我主页", "点我头像"
+      ]
+    },
+    "absolute_price": {
+      "description": "价格绝对化",
+      "words": [
+        {"word": "超级便宜", "replace": "性价比高 / 价格友好", "risk": "absolute"},
+        {"word": "最便宜", "replace": "价格很实惠 / 性价比高", "risk": "absolute"},
+        {"word": "一百块都不用", "replace": "百元内就能拿下 / 价格很亲民", "risk": "absolute"},
+        {"word": "一百都不用", "replace": "百元内 / 价格友好", "risk": "absolute"},
+        {"word": "白菜价", "replace": "价格很实惠", "risk": "absolute"},
+        {"word": "不要钱", "replace": "零成本 / 免费获取", "risk": "absolute"}
+      ]
+    },
+    "absolute_common": {
+      "description": "常见绝对化短语",
+      "words": [
+        {"word": "最适合", "replace": "很适合 / 对XX很友好", "risk": "absolute"},
+        {"word": "最好用", "replace": "很受欢迎 / 用下来效果不错", "risk": "absolute"},
+        {"word": "最温和", "replace": "用起来很舒服", "risk": "absolute"},
+        {"word": "最有效", "replace": "效果不错 / 反馈好", "risk": "absolute"},
+        {"word": "比大牌还好用", "replace": "用下来不输大牌", "risk": "absolute"},
+        {"word": "大家一定要买", "replace": "真心推荐试试", "risk": "absolute"},
+        {"word": "一定要买", "replace": "推荐试试 / 真心觉得好", "risk": "absolute"}
+      ]
+    }
+  },
+
+  "beauty": {
+    "description": "美妆护肤行业",
+    "effect_ban": {
+      "description": "功效类禁用（需特证）",
+      "words": [
+        {"word": "美白", "replace": "提亮肤色", "risk": "effect_ban"},
+        {"word": "祛斑", "replace": "淡化色斑", "risk": "effect_ban"},
+        {"word": "祛痘", "replace": "改善痘痘", "risk": "effect_ban"},
+        {"word": "抗皱", "replace": "改善细纹", "risk": "effect_ban"},
+        {"word": "去皱", "replace": "减少细纹", "risk": "effect_ban"},
+        {"word": "瘦脸", "replace": "紧致轮廓", "risk": "effect_ban"},
+        {"word": "瘦身", "replace": "轻盈感", "risk": "effect_ban"},
+        {"word": "减肥", "replace": "控制体脂", "risk": "effect_ban"},
+        {"word": "溶脂", "replace": "减少脂肪", "risk": "effect_ban"},
+        {"word": "增高", "replace": "视觉显高", "risk": "effect_ban"},
+        {"word": "治疗", "replace": "改善/缓解", "risk": "effect_ban"},
+        {"word": "药用", "replace": "妆字号", "risk": "effect_ban"},
+        {"word": "医美", "replace": "美容护理", "risk": "effect_ban"},
+        {"word": "整容", "replace": "美容", "risk": "effect_ban"},
+        {"word": "整形", "replace": "美容", "risk": "effect_ban"},
+        {"word": "注射", "replace": "专业护理", "risk": "effect_ban"}
+      ]
+    },
+    "false_effect": {
+      "description": "虚假功效",
+      "words": [
+        {"word": "三天美白", "replace": "持续使用提亮肤色", "risk": "false_promise"},
+        {"word": "三天就白了", "replace": "持续使用皮肤亮了", "risk": "false_promise"},
+        {"word": "三天皮肤就变白", "replace": "持续使用皮肤亮了", "risk": "false_promise"},
+        {"word": "彻底根治痘痘", "replace": "帮助改善痘痘问题", "risk": "false_promise"},
+        {"word": "永久去皱", "replace": "坚持使用减少细纹", "risk": "false_promise"},
+        {"word": "7天换皮", "replace": "肌肤状态有改善", "risk": "false_promise"},
+        {"word": "一抹就白", "replace": "皮肤看起来更亮", "risk": "false_promise"},
+        {"word": "一针见效", "replace": "术后效果因人而异", "risk": "false_promise"},
+        {"word": "永久脱毛", "replace": "有效减少毛发量", "risk": "false_promise"},
+        {"word": "就白了", "replace": "有明显提亮", "risk": "false_promise"},
+        {"word": "皮肤就白了", "replace": "皮肤亮了一个色号", "risk": "false_promise"}
+      ]
+    }
+  },
+
+  "education": {
+    "description": "教育培训行业",
+    "promise": {
+      "description": "承诺类",
+      "words": [
+        {"word": "包过", "replace": "通过率有保障"},
+        {"word": "保过", "replace": "不过可重修"},
+        {"word": "不过退款", "replace": "未通过可重学"},
+        {"word": "一次通关", "replace": "高效冲刺方案"},
+        {"word": "必考", "replace": "大概率考察"},
+        {"word": "一定成功", "replace": "有望达成目标"},
+        {"word": "彻底掌握", "replace": "系统学习后能熟练运用"},
+        {"word": "完全学会", "replace": "学完后能独立操作"},
+        {"word": "全部记住", "replace": "有方法帮助记忆"},
+        {"word": "速成", "replace": "高效学习方案"}
+      ]
+    },
+    "qualification": {
+      "description": "资质类",
+      "words": [
+        {"word": "官方授权", "replace": "合作/使用"},
+        {"word": "官方认证", "replace": "专业/可信"},
+        {"word": "官方合作", "replace": "合作"},
+        {"word": "名师", "replace": "专业讲师"},
+        {"word": "专家推荐", "replace": "推荐"},
+        {"word": "官方报名", "replace": "报名"}
+      ]
+    }
+  },
+
+  "finance": {
+    "description": "金融理财行业",
+    "yield_promise": {
+      "description": "收益承诺类",
+      "words": [
+        {"word": "稳赚不赔", "replace": "收益可观"},
+        {"word": "年化XX%", "replace": "过往收益仅供参考"},
+        {"word": "保本理财", "replace": "稳健型产品"},
+        {"word": "刚性兑付", "replace": "承诺不受支持"},
+        {"word": "保证收益", "replace": "预期收益"},
+        {"word": "一定赚钱", "replace": "有机会获得收益"},
+        {"word": "必涨", "replace": "有上涨空间"},
+        {"word": "翻倍", "replace": "有较大涨幅"},
+        {"word": "高回报", "replace": "收益潜力"},
+        {"word": "天天涨停", "replace": "表现强劲"}
+      ]
+    },
+    "required_disclaimer": "⚠️ 投资有风险，入市需谨慎。本文内容仅供参考，不构成投资建议。"
+  },
+
+  "medical": {
+    "description": "医疗健康行业",
+    "words": [
+      {"word": "治疗", "replace": "改善/缓解/调理", "risk": "medical"},
+      {"word": "根治", "replace": "有效改善", "risk": "medical"},
+      {"word": "预防", "replace": "可能有帮助", "risk": "medical"},
+      {"word": "治愈", "replace": "有效缓解", "risk": "medical"},
+      {"word": "药到病除", "replace": "有帮助", "risk": "medical"},
+      {"word": "立刻见效", "replace": "有较好反馈", "risk": "medical"},
+      {"word": "特效药", "replace": "有效药物", "risk": "medical"},
+      {"word": "专用药", "replace": "指定用药", "risk": "medical"}
+    ]
+  },
+
+  "food": {
+    "description": "食品饮料行业",
+    "words": [
+      {"word": "最高品质", "replace": "优质/高端", "risk": "absolute"},
+      {"word": "最安全", "replace": "品质保障", "risk": "absolute"},
+      {"word": "100%纯天然", "replace": "天然成分", "risk": "need_proof"},
+      {"word": "增强免疫力", "replace": "可能有助于", "risk": "need_proof"},
+      {"word": "抗衰老", "replace": "延缓衰老迹象", "risk": "need_proof"},
+      {"word": "抗氧化", "replace": "减少氧化损伤", "risk": "need_proof"},
+      {"word": "降血压", "replace": "有助于血压管理", "risk": "need_proof"},
+      {"word": "降血糖", "replace": "有助于血糖控制", "risk": "need_proof"}
+    ]
+  },
+
+  "emoji_evasion": {
+    "description": "emoji 替代检测（常见规避模式）",
+    "patterns": [
+      {"pattern": "最.?好", "description": "用标点分割绝对化词"},
+      {"pattern": "天.?天", "description": "用标点分割叠字"},
+      {"pattern": "第.?一", "description": "用标点分割序数词"},
+      {"pattern": "保.?本", "description": "用标点分割承诺词"},
+      {"pattern": "百.?分.?百", "description": "用标点分割绝对化表达"}
+    ]
+  }
+}
