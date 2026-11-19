@@ -166,7 +166,12 @@
     else drawSub(c, p, slot);
   }
   function paintStudio() { document.querySelectorAll('canvas[data-cv]').forEach(paintOne); }
-  const SLOT_NAME = Object.fromEntries(SLOTS);
+  const ALLS = [...SLOTS, ['x6', '副图 6'], ['x7', '副图 7'], ['x8', '副图 8']];
+  const SLOT_NAME = Object.fromEntries(ALLS);
+  // 带了同行的图：带来几张就做几张（主图 + 副图），不超过平台能发的张数，最多 9 张；没带就是固定 6 张
+  const peerN = () => Math.min(S.samp.filter(u => !(/^data:/.test(u) && !S.peerUp)).length, ALLS.length, (PLAT[state.platform] || {imgs:9}).imgs);
+  const slotsOf = p => (p && p.virt && peerN() ? ALLS.filter((x, k) => k < peerN() || (k < SLOTS.length && S.ai[p.i + ':' + x[0]])) : SLOTS);   // 旧记录里多出来的图照样显示
+  const setN = virt => (virt && peerN() ? peerN() : SLOTS.length);
   function dlCanvas(cv, name) { cv.toBlob(b => { const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000); }, 'image/png'); }
   const AR = {闲鱼:'3:4', 小红书:'3:4', 淘宝:'1:1', 拼多多:'1:1'};
   const VS = ['浅色木纹书桌，旁边有一杯咖啡', '白色书桌，旁边有台灯和便利贴', '宿舍书桌，旁边有水杯和耳机', '铺着米色桌布的餐桌，旁边有一小盆绿植', '灰色办公桌，旁边露出键盘一角', '窗边的小桌', '深色木桌，旁边有一副眼镜', '床边小桌', '图书馆长桌，旁边有几本合上的书，书脊上没有字', '飘窗上的小茶几', '格子桌布的小方桌', '白色床单上', '浅灰色沙发上，旁边有个抱枕', '木地板上，旁边有一个帆布包', '阳台的折叠桌', '咖啡店的圆桌，旁边有一杯拿铁', '奶油色的梳妆台', '黑色电脑桌，旁边有鼠标', '铺着牛皮纸的桌面', '大理石纹的台面', '藤编小茶几', '自习室的隔板桌', '厨房的白色岛台一角', '儿童房的小书桌，旁边有彩色铅笔', '榻榻米上的矮桌', '绿色切割垫板上，旁边有尺子', '落地窗边的地毯上', '工位隔板旁的桌面，贴着几张空白便签', '原木长凳上', '浅蓝色书桌，旁边有一个笔筒'];
@@ -185,7 +190,7 @@
   const xst = () => (XST_SHOW && Number.isInteger(S.xst) && S.xst >= 0 && S.xst < XHS_STYLE.length ? S.xst : -1);
   const XHS_LAY = ['留白式：只放一两个要点，冲击力优先', '均衡式：三四个要点分块排', '知识卡式：要点排成小卡片，密而有序', '清单式：带序号竖排', '左右对比式', '流程式：几步用箭头串起来', '思维导图式：中心向外发散', '四象限式'];
   const MAIN_V = ['promo', 'screen', 'print', 'hand', 'collage'], SUB_PHOTO = ['using', 'pages', 'detail', 'files', 'screen2', 'hand2'], SUB_TA = ['flow', 'note'], SUB_TB = ['toc', 'points', 'who'];
-  const TYPE_NAME = {promo:'AI 主图', embed:'AI 主图 · 嵌了真实截图', embed2:'截图讲解', shot:'真实截图 · 原样', redo:'照参考图重做', core:'核心卖点', intro:'简介', screen:'拍屏幕', print:'打印实拍', hand:'手持', collage:'样张拼图', using:'使用场景', pages:'样张平铺', detail:'局部特写', files:'文件列表', screen2:'屏幕展示', hand2:'手机展示', flow:'怎么发货', note:'购买须知', toc:'目录便签', points:'你会拿到', who:'适合谁', scene:'场景图'};
+  const TYPE_NAME = {promo:'AI 主图', embed:'AI 主图 · 嵌了真实截图', embed2:'截图讲解', shot:'真实截图 · 原样', redo:'在参考图上改', core:'核心卖点', intro:'简介', screen:'拍屏幕', print:'打印实拍', hand:'手持', collage:'样张拼图', using:'使用场景', pages:'样张平铺', detail:'局部特写', files:'文件列表', screen2:'屏幕展示', hand2:'手机展示', flow:'怎么发货', note:'购买须知', toc:'目录便签', points:'你会拿到', who:'适合谁', scene:'场景图'};
   const NEEDS_PAGE = ['promo', 'screen', 'print', 'hand', 'collage', 'using', 'pages', 'detail', 'screen2', 'hand2'];
   const shuf = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
   const pick = a => a[Math.floor(Math.random() * a.length)];
@@ -211,14 +216,16 @@
     const mainT = own && Math.random() < .8 ? 'embed' : 'promo'; let si = i;
     r[i + ':main'] = {t:mainT, ps, lay, font, ar, xhs, si:si++, frame:emSeq[i % emSeq.length], pos:pick(EMBED_POS)};
     if (own) { const nShot = Math.min(own, 3, 1 + Math.floor(Math.random() * 3)), mixed = [...Array(nShot).fill('shot'), ...(Math.random() < .65 ? ['embed2'] : [])]; subs = shuf([...mixed, ...['flow', ...shuf(['points', 'who', 'note', 'core'])].slice(0, 5 - mixed.length)]); }
-    SLOTS.slice(1).forEach(([sl], k) => { const t = subs[k]; r[i + ':' + sl] = Object.assign({t, ps, lay:pick(xhs ? XHS_LAY.slice(1) : LAYOUTS), font, ar:ar === '1:1' ? '1:1' : pick(['3:4', '3:4', '1:1'])}, t === 'shot' || t === 'embed2' ? {si:si++, frame:emSeq[(i + k + 1) % emSeq.length], head:pick(SHOT_HEAD)} : {}); });
+    ALLS.slice(1).forEach(([sl], k) => { const t = subs[k] || 'core'; r[i + ':' + sl] = Object.assign({t, ps, lay:pick(xhs ? XHS_LAY.slice(1) : LAYOUTS), font, ar:ar === '1:1' ? '1:1' : pick(['3:4', '3:4', '1:1'])}, t === 'shot' || t === 'embed2' ? {si:si++, frame:emSeq[(i + k + 1) % emSeq.length], head:pick(SHOT_HEAD)} : {}); });
     store.set('sjb-recent', [ps + '|' + lay, ...recent].slice(0, 40));
     return r;
   }
   function mkMix(n, virt) { emSeq = shuf(EMBED); const r = {}; for (let i = 0; i < n; i++) Object.assign(r, mixOne(i, virt)); return {r}; }
   const rc = (p, slot) => (S.mix && S.mix.r && S.mix.r[p.i + ':' + slot] && (!p.virt || S.mix.r[p.i + ':' + slot].lay) ? S.mix.r[p.i + ':' + slot] : null) || {t:p.virt ? (slot === 'main' ? 'promo' : {list:'points', who:'who', preview:'core', flow:'flow', note:'note'}[slot]) : 'scene', scene:PS[0], light:LIGHT[0], ps:PROMO_STYLE[0], lay:LAYOUTS[0], font:FONTS[0], dist:'商品占画面大约六成', ar:AR[state.platform] || '1:1'};
-  // 有参考图时：第 1 张参考图重做成主图，第 2、3、4 张重做成前几张副图；没有对应参考图的位置用自己的介绍卡
-  const refOf = (p, slot) => p.virt ? peerRefs()[SLOTS.findIndex(x => x[0] === slot)] || '' : '';
+  // 带了同行的图：第 1 张改成主图，后面每一张对应改成一张副图，带来几张就改几张
+  const refOf = (p, slot) => { const k = ALLS.findIndex(x => x[0] === slot); return p.virt && k >= 0 && k < peerN() ? peerRefs()[k] || '' : ''; };
+  // 副图的比例跟着它对应的那张参考图走（竖图出 3:4，其余出 1:1）；主图按平台的常用比例
+  const REFAR = {}; const refAr = u => new Promise(ok => { if (!u || REFAR[u]) return ok(); const im = new Image(); im.onload = () => { REFAR[u] = im.naturalWidth / im.naturalHeight < .87 ? '3:4' : '1:1'; ok(); }; im.onerror = () => ok(); im.src = u; });
   // 这个位置要用的那张卖家自己的截图（配方里记的是第几张，按现有张数轮着取）
   const shotOf = (p, slot) => { const own = ownShots(), r = rc(p, slot); return p.virt && own.length && Number.isInteger(r.si) ? own[r.si % own.length] : ''; };
   const SHOT_T = ['shot', 'embed', 'embed2'];
@@ -240,17 +247,17 @@
   const q4 = a => a.map((x, i) => `${i + 1}.「${x}」`).join(' ');
   // 一张图的完整任务：提示词 + 参考图 + 比例。字没通过检查就不出图
   function imgJob(p, slot) {
-    const r = rc(p, slot), main = slot === 'main', shape = r.ar === '1:1' ? '1:1 方图' : '3:4 竖图';
+    const r0 = rc(p, slot), main = slot === 'main', r = !main && p.virt && REFAR[refOf(p, slot)] ? Object.assign({}, r0, {ar:REFAR[refOf(p, slot)]}) : r0, shape = r.ar === '1:1' ? '1:1 方图' : '3:4 竖图';
     if (!p.virt) return {size:r.ar, refs:S.refs.slice(0, 3), prompt:`参考图是卖家本人用手机拍的商品实拍。请生成一张新的手机实拍照片，${shape}：把参考图里的这件商品原样放在「${r.scene}」，${r.light}，${r.dist}，拍摄角度和参考图基本一致。必须保持商品本体和参考图完全一样：外形比例、颜色、材质、商标和机身上的字、接口和按键位置、划痕磨损和使用痕迹，一处都不能改；不美化，不修掉瑕疵，不补全参考图里看不到的面，不增加参考图里没有的配件、包装盒和赠品。商品不变形、不拉伸，商品上原有的字保持清晰不扭曲。要像普通人随手拍的：轻微噪点，构图不必完美，不要影棚布光，不要海报感，商品不要撑满画面。图上不加任何文字、水印、贴纸、边框、价格。`};
     const T = imgTexts(p, slot), bad = lvOf(T.join(' '), true).hits; if (bad.length) throw new Error('图片上的字没通过检查：' + bad.map(h => h.fragment).join('、'));
     const t = effT(p, slot), ref = refOf(p, slot), mainAi = S.ai[p.i + ':main'], refs = [], notes = [];
     const design = `风格：${r.ps}。排版：${r.lay}。字体：${r.font}。`;
     const flat = '这是虚拟商品的介绍图，是平面设计，不是照片：不要出现桌面、手、打印出来的纸、相机实拍的场景，不要让人以为卖的是纸质实物。';
-    if (!main && mainAi && /^https?:/.test(mainAi.url)) { refs.push(mainAi.url); notes.push(`第 ${refs.length} 张参考图是这套图已经做好的主图：沿用它的配色、字体和装饰元素，让整套图像一家的；不要照搬它上面的文字`); }
+    if (!main && t !== 'redo' && mainAi && /^https?:/.test(mainAi.url)) { refs.push(mainAi.url); notes.push(`第 ${refs.length} 张参考图是这套图已经做好的主图：沿用它的配色、字体和装饰元素，让整套图像一家的；不要照搬它上面的文字`); }
     let body;
     if (t === 'redo') {
       refs.push(ref); const k = refs.length;
-      body = `电商虚拟商品${main ? '主图' : '详情图'}，${shape}。照第 ${k} 张参考图重新设计一张：它讲什么内容、分几块、每块说什么，都保留；换一套配色、换字体、换排版方式（${design}），做出来不能和原图看着一样。${main ? `大标题一定要换成「${T[0]}」，参考图上原来的标题不要出现。` : ''}参考图里的品牌标志、店名、水印、二维码、联系方式、价格、销量数字，以及「最、第一、官方、正版、全网、包过」这类词，一律去掉不要。${flat}`;
+      body = `电商虚拟商品${main ? '主图' : '详情图'}，${shape}。直接在第 ${k} 张参考图上修改，不要重新设计一张：版式结构、分几块、每块的位置和大小、图标和示意图的位置都和参考图保持一样，讲内容的文字原样保留；参考图是照片就保持照片的样子，是平面设计就保持平面设计。只改这几处：一、配色和字体换一套（风格：${r.ps}。字体：${r.font}。）。${main ? `二、大标题换成「${T[0]}」，放在原来标题的位置，参考图上原来的标题不要出现。三、` : '二、'}参考图里的品牌标志、店名、账号名、水印、二维码、联系方式、价格、销量数字，以及「最、第一、官方、正版、全网、包过」这类词，一律去掉，空出来的位置用背景补平。`;
     } else if (t === 'embed' || t === 'embed2') {
       refs.push(shotOf(p, slot)); const k = refs.length;
       const keep = `第 ${k} 张参考图是这件商品的真实内容截图：把它${r.frame}，${t === 'embed' ? r.pos : '放在画面中间偏下'}，占画面四到五成。截图里的内容原样保留：不重画、不改字、不加字、不模糊、不拉伸，不裁掉主要内容。截图以外的部分才是平面设计。`;
@@ -271,7 +278,7 @@
       }[t] + flat;
     }
     const tail = t === 'embed' || t === 'embed2' ? `文字要求：除了上面引号里的字和截图里原有的字，不出现任何其他文字、数字、英文、价格；引号里的字逐字照写，无错字，边缘清楚不模糊。不出现任何品牌标志、人脸、水印、二维码、联系方式、平台名字。画面不变形、不拉伸。`
-      : t === 'redo' ? `文字要求：只保留参考图里讲内容的字${T.length ? '和上面引号里的字' : ''}，不新增别的文字、英文、价格；字要清楚，无错字，边缘不模糊。不出现人脸、水印、二维码、联系方式、平台名字。画面不变形、不拉伸。`
+      : t === 'redo' ? `文字要求：只保留参考图里讲内容的字${T.length ? '和上面引号里的字' : ''}，不新增别的文字、英文、价格；字要清楚，无错字，边缘不模糊。不出现水印、二维码、联系方式、平台名字。画面不变形、不拉伸。`
       : `文字要求：除了上面引号里的字，不出现任何其他文字、数字、英文、价格；引号里的字逐字照写，无错字，边缘清楚不模糊。不出现任何品牌标志、人脸、水印、二维码、联系方式、平台名字。画面不变形、不拉伸。`;
     return {size:r.ar, refs, prompt:body + (notes.length ? '参考图说明：' + notes.join('；') + '。' : '') + tail};
   }
@@ -291,17 +298,17 @@
         <label class="fld st-info"><span>${ic('file')}还知道什么，都写在这里（可以不填）</span><textarea id="st-info" rows="4" placeholder="想到什么写什么，不用分栏，例如：\n里面有 30 天排期表、每日打卡页、使用说明\n想卖 19.9\n95 新，边框有一处磕碰\n\n从闲鱼带商品过来时，对方的说明也会自动放在这里">${esc(S.info)}</textarea></label>
         <div class="st-opts">${seg('stk', [['auto', '自动判断', 'wand'], ['virtual', '虚拟商品', 'file'], ['physical', '实物', 'box']], S.kind)}<button class="btn sm" id="ai-set2">${ic('bot')}AI ${tkey() && ikey() ? '已接入' : tkey() || ikey() ? '接了一半' : '未接入'}</button><span class="mdl-now" title="点左边的按钮可以换模型">文案 <code>${esc(AI.tm)}</code> · 生图 <code>${esc(AI.im)}</code></span></div>
         ${(() => { const arr = phys ? S.refs : S.samp;
-          return `<div class="refbox"><label class="up${arr.length ? ' has' : ''}">${ic('camera')}<b>${arr.length ? `参考图 ${arr.length} 张，点这里重选` : phys ? '参考图（必传）' : '参考图（可选）'}</b><small>点这里选图、把图片拖进来、或截图后直接按 Ctrl+V / ⌘V 粘贴，最多 4 张。${phys ? '传你要卖的这件商品的照片，AI 只换场景和光线，商品本身照图来，不改外观和瑕疵。' : '强烈建议传几张你自己商品的内容截图（目录、内页、文件列表）：AI 主图会把截图嵌进去，副图里也会夹几张原样截图，看着真实。同行的图用书签带过来，只照着重做，不原样用。'}</small><input id="st-photos" type="file" accept="image/*" multiple hidden></label>
-            ${arr.length ? `<div class="thumbs">${arr.map((u, i) => `<span class="th"><img src="${esc(u)}" alt="参考图 ${i + 1}">${phys ? '' : `<i class="who ${isOwn(u) ? 'own' : ''}">${isOwn(u) ? '原样用' : '照着重做'}</i>`}<button class="thx" data-rmph="${i}" title="删掉这张">×</button></span>`).join('')}</div>` : ''}
-            ${!phys && arr.some(u => /^data:/.test(u)) ? `<div class="own-sw"><span>你传的图是：</span><button class="${S.peerUp ? '' : 'on'}" data-peerup="0">${ic('check')}我自己商品的截图<small>会原样放进图里</small></button><button class="${S.peerUp ? 'on' : ''}" data-peerup="1">${ic('eye')}别人的图<small>只照着重做，不原样用</small></button></div>` : ''}
-            <details class="bmbox"><summary>${ic('link')}想参考闲鱼、小红书、淘宝、拼多多上的某一条？一键把它的标题、说明、图片带过来</summary><ol><li>把这个按钮<b>拖到浏览器的收藏夹栏</b>（只用做一次）：<a class="btn sm bm" href="${esc(BM_ITEM)}" title="拖到收藏夹栏">带到上架宝</a><button class="btn sm" data-cpv="${esc(BM_ITEM)}">拖不了就复制代码</button></li><li>在你自己的浏览器里打开那条商品（或小红书笔记）的详情页，点收藏夹里的「带到上架宝」。闲鱼、小红书、淘宝、天猫、拼多多的网页版都行。</li><li>回到这一页，直接按 Ctrl+V / ⌘V。标题填到「卖什么」，文字说明进下面的信息框，图片进参考图。然后选平台、选数量，点生成，就会照着这条商品做一份你自己的。</li></ol><p class="cd-note">${ic('info')}它只在你点的那一刻读当前页面，不碰你的账号和登录信息。照着做的意思是：结构、卖点、版式跟它一样，句子重新写、图重新做。原样照搬会被判重复铺货或被投诉盗图。</p></details></div>`; })()}
+          return `<div class="refbox"><label class="up${arr.length ? ' has' : ''}">${ic('camera')}<b>${arr.length ? `参考图 ${arr.length} 张，点这里重选` : phys ? '参考图（必传）' : '参考图（可选）'}</b><small>点这里选图、把图片拖进来、或截图后直接按 Ctrl+V / ⌘V 粘贴，最多 ${phys ? 4 : 9} 张。${phys ? '传你要卖的这件商品的照片，AI 只换场景和光线，商品本身照图来，不改外观和瑕疵。' : '强烈建议传几张你自己商品的内容截图（目录、内页、文件列表）：AI 主图会把截图嵌进去，副图里也会夹几张原样截图，看着真实。同行的图用书签带过来：它有几张就出几张，每张都在原图上直接改，不原样用。'}</small><input id="st-photos" type="file" accept="image/*" multiple hidden></label>
+            ${arr.length ? `<div class="thumbs">${arr.map((u, i) => `<span class="th"><img src="${esc(u)}" alt="参考图 ${i + 1}">${phys ? '' : `<i class="who ${isOwn(u) ? 'own' : ''}">${isOwn(u) ? '原样用' : '在它上面改'}</i>`}<button class="thx" data-rmph="${i}" title="删掉这张">×</button></span>`).join('')}</div>` : ''}
+            ${!phys && arr.some(u => /^data:/.test(u)) ? `<div class="own-sw"><span>你传的图是：</span><button class="${S.peerUp ? '' : 'on'}" data-peerup="0">${ic('check')}我自己商品的截图<small>会原样放进图里</small></button><button class="${S.peerUp ? 'on' : ''}" data-peerup="1">${ic('eye')}别人的图<small>有几张改几张，不原样用</small></button></div>` : ''}
+            <details class="bmbox"><summary>${ic('link')}想参考闲鱼、小红书、淘宝、拼多多上的某一条？一键把它的标题、说明、图片带过来</summary><ol><li>把这个按钮<b>拖到浏览器的收藏夹栏</b>（只用做一次）：<a class="btn sm bm" href="${esc(BM_ITEM)}" title="拖到收藏夹栏">带到上架宝</a><button class="btn sm" data-cpv="${esc(BM_ITEM)}">拖不了就复制代码</button></li><li>在你自己的浏览器里打开那条商品（或小红书笔记）的详情页，点收藏夹里的「带到上架宝」。闲鱼、小红书、淘宝、天猫、拼多多的网页版都行。</li><li>回到这一页，直接按 Ctrl+V / ⌘V。标题填到「卖什么」，文字说明进下面的信息框，图片进参考图。然后选平台、选数量，点生成，就会照着这条商品做一份你自己的。</li></ol><p class="cd-note">${ic('info')}它只在你点的那一刻读当前页面，不碰你的账号和登录信息。照着做的意思是：结构、卖点、版式跟它一样，句子重新写；图是在它的原图上改配色、字体和标题，它有几张就出几张。原样照搬会被判重复铺货或被投诉盗图；改过的图离原图近，发之前自己再看一眼。</p></details></div>`; })()}
         </div></div>
       <div class="stp${S.selP ? ' done' : ''}"><span class="no">2</span><div class="stp-b"><h3>发到哪个平台<em>必选</em></h3>
         <div class="pcards">${Object.entries(PLAT).map(([k, v]) => `<button class="pcard${S.selP && state.platform === k ? ' on' : ''}" data-stp="${k}"><b>${k}</b><small>标题 ${v.tl} 字内 · 最多 ${v.imgs} 张图</small></button>`).join('')}</div>${XST_SHOW && S.selP && state.platform === '小红书' && !phys ? `<div class="xst"><p class="xst-h">小红书图片风格<small>不选就每套随机抽一种</small></p><div class="xst-g"><button class="xsc${xst() < 0 ? ' on' : ''}" data-xst="-1"><i class="sw rnd"></i><b>随机</b><small>每套不一样</small></button>${XHS_UI.map((u, k) => `<button class="xsc${xst() === k ? ' on' : ''}" data-xst="${k}"><i class="sw" style="background:linear-gradient(135deg,${u[2]} 0 55%,${u[3]} 55%)"></i><b>${u[0]}</b><small>${u[1]}</small></button>`).join('')}</div></div>` : ''}</div></div>
       <div class="stp${S.selN ? ' done' : ''}"><span class="no">3</span><div class="stp-b"><h3>做几套<em>必选</em></h3>
         <div class="pcards">${NCARD.map(([n, t, d]) => `<button class="pcard${S.selN && S.n === n ? ' on' : ''}" data-stn="${n}"><b>${t}</b><small>${d}</small></button>`).join('')}</div>
         <p class="st-tip">${ic('info')}一套就是一条能单独发布的商品，标题、说明、图片各不相同。</p></div></div>
-      <div class="st-run"><div class="st-btns"><button class="btn acc xl${miss.length ? ' off' : ''}" id="st-go">${ic('sparkles')}先出主图<small>推荐 · ${S.selN ? `画 ${S.n} 张` : '每套 1 张'}</small></button><button class="btn xl ghost${miss.length ? ' off' : ''}" id="st-go-all">${ic('layers')}一次出全套<small>${S.selN ? `画 ${S.n * 6} 张` : '每套 6 张'}</small></button></div>
+      <div class="st-run"><div class="st-btns"><button class="btn acc xl${miss.length ? ' off' : ''}" id="st-go">${ic('sparkles')}先出主图<small>推荐 · ${S.selN ? `画 ${S.n} 张` : '每套 1 张'}</small></button><button class="btn xl ghost${miss.length ? ' off' : ''}" id="st-go-all">${ic('layers')}一次出全套<small>${S.selN ? `画 ${S.n * setN(!phys)} 张` : `每套 ${setN(!phys)} 张`}</small></button></div>
         <p class="st-miss">${miss.length ? '还差：' + miss.join('、') : `${state.platform} · ${S.n} 套 · ${phys ? '实物' : '虚拟商品'}，可以生成了`}</p>
         <p class="st-tip">${ic('bulb')}建议先出主图定风格，满意了再出副图，更省钱。副图会跟着主图的风格走。</p></div>
       <details class="st-rules"><summary>${ic('shield')}标题、说明、图片是按什么规则生成的</summary><ul>
@@ -317,7 +324,7 @@
     infoDerive(); const key = JSON.stringify([q, S.n, state.platform, S.kind, S.info]);
     if (S.pend) { S.pend = false; S.run = key; S.runAt = Date.now(); S.runId = S.runAt.toString(36) + Math.random().toString(36).slice(2, 6); S.noGen = ''; S.restore = null; S.mixNew = true; }
     if (S.run !== key) return top + (S.run ? `<p class="st-tip anim">${ic('info')}你改了品名、平台、数量或补充信息，点上面的「生成」重新出。</p>` : '') + histHtml();
-    if (plansCache.key !== key) { plansCache = {key, v:info.stop ? null : buildPlans(info)}; if (S.fresh && plansCache.v) { plansCache.v.forEach(pp => SLOTS.forEach(([sl]) => { delete IMGC[ick(pp, sl)]; })); Object.keys(S.edits).forEach(k => { if (k.startsWith(key)) delete S.edits[k]; }); } if (plansCache.v && S.aiItems && S.aiItems.key === key && !S.pts) plansCache.v.forEach(pp => { pp.items = S.aiItems.it; }); S.fresh = false; if (S.mixNew && plansCache.v) { S.mix = mkMix(plansCache.v.length, plansCache.v[0].virt); S.mixNew = false; } S.ai = {}; S.open = 0; if (plansCache.v) plansCache.v.forEach((p, i) => SLOTS.forEach(([sl]) => { const c = IMGC[ick(p, sl)]; if (c) S.ai[i + ':' + sl] = c; })); if (S.restore) { Object.assign(S.ai, S.restore); if (plansCache.v) Object.entries(S.restore).forEach(([id, a]) => { const [i, sl] = id.split(':'); if (plansCache.v[+i]) IMGC[ick(plansCache.v[+i], sl)] = a; }); S.restore = null; }
+    if (plansCache.key !== key) { plansCache = {key, v:info.stop ? null : buildPlans(info)}; if (S.fresh && plansCache.v) { plansCache.v.forEach(pp => ALLS.forEach(([sl]) => { delete IMGC[ick(pp, sl)]; })); Object.keys(S.edits).forEach(k => { if (k.startsWith(key)) delete S.edits[k]; }); } if (plansCache.v && S.aiItems && S.aiItems.key === key && !S.pts) plansCache.v.forEach(pp => { pp.items = S.aiItems.it; }); S.fresh = false; if (S.mixNew && plansCache.v) { S.mix = mkMix(plansCache.v.length, plansCache.v[0].virt); S.mixNew = false; } S.ai = {}; S.open = 0; if (plansCache.v) plansCache.v.forEach((p, i) => slotsOf(p).forEach(([sl]) => { const c = IMGC[ick(p, sl)]; if (c) S.ai[i + ':' + sl] = c; })); if (S.restore) { Object.assign(S.ai, S.restore); if (plansCache.v) Object.entries(S.restore).forEach(([id, a]) => { const [i, sl] = id.split(':'); if (plansCache.v[+i]) IMGC[ick(plansCache.v[+i], sl)] = a; }); S.restore = null; }
       G.on = G.done = false; if (plansCache.v && S.noGen !== key) setTimeout(() => { if (plansCache.key === key) runGen(key); }, 60); }
     const plans = plansCache.v;
     const risk = `<section class="st-risk ${info.stop ? 'red' : lv} anim"><span class="lamp">${ic(info.stop || lv === 'red' ? 'ban' : lv === 'amber' ? 'alert' : 'check')}</span><div><b>${info.stop ? esc(info.stop) : lv === 'green' ? (info.pr.ban.length ? '可以发，但有条件，先看下面的提醒' : '体检通过，直接出方案') : '原名不能直接用，已换成合规写法'}</b>
@@ -329,17 +336,17 @@
     const o = Math.min(S.open, plans.length - 1), p = plans[o], ed = S.edits[key + o] || {};
     const title = ed.title || p.title, desc = ed.desc || p.desc, tl = PLAT[state.platform].tl, tlint = lvOf(title, p.virt).level, dl = lvOf(desc, p.virt), dred = dl.hits.filter(redHit).map(h => h.fragment);
     const grid = `<div class="plans">${plans.map(x => `<button class="plan${x.i === o ? ' on' : ''}" data-plan="${x.i}" style="--i:${x.i}"><canvas data-cv="${x.i}:main" width="1080" height="1080"></canvas><span class="pa">${ic(x.icon)}${String(x.i + 1).padStart(2, '0')} ${x.angle}</span><span class="pt">${esc((S.edits[key + x.i] || {}).title || x.title)}</span><span class="pp">${x.price ? '¥' + x.price : '待定价'}${x.need ? `<i title="${esc(x.need)}">${ic('info')}</i>` : ''}</span></button>`).join('')}</div>`;
-    const imgHits = p.virt ? lvOf(SLOTS.flatMap(([sl]) => imgTexts(p, sl)).join(' '), true).hits.map(h => h.fragment) : [], imgOk = !imgHits.length;
-    const chk = [[title.length <= tl, `标题 ${title.length}/${tl} 字`], [tlint === 'green', '标题体检' + LV[tlint]], [!dred.length, dred.length ? '说明里有红灯词：' + dred.slice(0, 3).join('、') : '说明无红灯词'], [imgOk, imgOk ? (p.virt ? '图片上的字已检查，无违禁词' : '实物图不加文字') : '图片上有违禁词：' + imgHits.slice(0, 3).join('、')], [p.virt || S.photos.length > 0, p.virt ? `主图 ${AR[state.platform]} · 共 6 张（${state.platform}最多 ${PLAT[state.platform].imgs} 张）` : S.photos.length ? `参考图 ${S.photos.length} 张` : '还没传参考图'], [!!p.price, p.price ? '已定价' : '填一个想卖的价']];
+    const imgHits = p.virt ? lvOf(slotsOf(p).flatMap(([sl]) => imgTexts(p, sl)).join(' '), true).hits.map(h => h.fragment) : [], imgOk = !imgHits.length;
+    const chk = [[title.length <= tl, `标题 ${title.length}/${tl} 字`], [tlint === 'green', '标题体检' + LV[tlint]], [!dred.length, dred.length ? '说明里有红灯词：' + dred.slice(0, 3).join('、') : '说明无红灯词'], [imgOk, imgOk ? (p.virt ? '图片上的字已检查，无违禁词' : '实物图不加文字') : '图片上有违禁词：' + imgHits.slice(0, 3).join('、')], [p.virt || S.photos.length > 0, p.virt ? `主图 ${AR[state.platform]} · 共 ${slotsOf(p).length} 张（${state.platform}最多 ${PLAT[state.platform].imgs} 张）` : S.photos.length ? `参考图 ${S.photos.length} 张` : '还没传参考图'], [!!p.price, p.price ? '已定价' : '填一个想卖的价']];
     if (p.virt) { const hd = headOf(p), same = hd === p.P; chk.push([!same, same ? '主图上的大标题还是原来的品名（文案 AI 没给出改写），生成前先让 AI 重写文案' : `主图大标题用的是改写后的「${hd}」`]); }
-    if (p.virt && peerRefs().length) chk.push([false, `有 ${Math.min(peerRefs().length, 4)} 张图是照同行的图重做的，图上的字来自参考图，程序没法提前检查，发布前自己看一眼`]);
+    if (p.virt && peerRefs().length) chk.push([false, `这一套的 ${peerN()} 张图都是在同行的图上直接改的，图上的字来自原图，程序没法提前检查。发布前每张都看一眼：有没有残留的店名、水印、联系方式`]);
     if (p.virt && ownShots().length) chk.push([false, '这一套里用了你自己的真实截图。截图里的字程序没法检查：自己看一眼有没有别人的名字、水印、二维码、联系方式']);
     if (!p.virt) { const given = [state.q, infoParts()[0]].join(' '), inv = ['包装盒', '发票', '保修', '贴膜', '保护壳', '一手', '国行', '未拆', '无拆', '电池健康', '全套配件', '原装配件', '正规渠道'].filter(w => desc.replace(/【待补[^】]*】/g, '').includes(w) && !given.includes(w)), todo = (desc.match(/【待补[^】]*】/g) || []).length; chk.push([!inv.length, inv.length ? '说明里有你没提供的信息，请核对：' + inv.join('、') : '说明里没有多写的信息'], [!todo, todo ? `说明里还有 ${todo} 处【待补】要你填` : '没有待补项']); }
     const detail = `<section class="st-d anim" id="st-d"><div class="st-l"><div class="st-h"><span class="pa big">${ic(p.icon)}第 ${o + 1} 套 · ${p.angle}</span>${p.need ? `<span class="b vio">${ic('info')}${esc(p.need)}</span>` : ''}</div>
         <div class="gal"><figure class="g0${S.busy[o + ':main'] ? ' busy' : ''}"><canvas data-cv="${o}:main" width="1080" height="1080"></canvas><figcaption>${ic('image')}${state.platform === '小红书' ? '封面' : '主图'}${p.virt && S.ai[o + ':main'] ? ' · ' + (TYPE_NAME[effT(p, 'main')] || '') : ''}<button class="ib" data-dl="${o}:main" title="下载">${ic('down')}</button>${S.ai[o + ':main'] ? '' : '<i class="tpl">模板图</i>'}</figcaption></figure>
-          ${SLOTS.slice(1).map(([s, n]) => `<figure class="${S.busy[o + ':' + s] ? 'busy' : ''}"><canvas data-cv="${o}:${s}" width="1080" height="1080"></canvas><figcaption>${p.virt ? (S.ai[o + ':' + s] ? TYPE_NAME[effT(p, s)] || n : n) : (S.ai[o + ':' + s] ? {list:'场景 2', who:'场景 3', preview:'场景 4', flow:'场景 5', note:'场景 6'} : {list:'配件', who:'成色', preview:'拍摄', flow:'交易', note:'须知'})[s]}<button class="ib" data-dl="${o}:${s}" title="下载">${ic('down')}</button>${S.ai[o + ':' + s] ? '' : '<i class="tpl">模板图</i>'}</figcaption></figure>`).join('')}</div>
-        <div class="st-next">${!ikey() ? `<span class="b vio">${ic('alert')}没填生图密钥，现在是模板图</span>` : !S.ai[o + ':main'] ? `<span class="b">${ic('clock')}主图${S.busy[o + ':main'] ? '正在画' : '还没画出来'}</span><button class="btn" id="st-remain"${S.busy[o + ':main'] ? ' disabled' : ''}>${ic('sparkles')}画主图</button>` : SLOTS.slice(1).every(([sl]) => S.ai[o + ':' + sl]) ? `<span class="b reg">${ic('check')}这一套 6 张图都画好了</span><button class="btn" id="st-remain">${ic('sparkles')}换一张主图</button>` : `<button class="btn acc" id="st-aiall"${SLOTS.slice(1).some(([sl]) => S.busy[o + ':' + sl]) ? ' disabled' : ''}>${ic('sparkles')}主图满意，按这个风格画 5 张副图</button><button class="btn" id="st-remain"${S.busy[o + ':main'] ? ' disabled' : ''}>${ic('sparkles')}不满意，换一张主图</button>`}</div>
-        <div class="row"><button class="btn" id="st-dlall">${ic('down')}下载 6 张图</button>${!p.virt ? `<span class="b">${ic('camera')}瑕疵图请用你自己拍的原图，放在后面几张</span>` : `<span class="b wrapb">${ic('info')}${ownShots().length ? 'AI 图和你的真实截图混着排，每套的排法不一样；真实截图原样使用，不花出图费' : peerRefs().length ? `前 ${Math.min(peerRefs().length, 4)} 张图是照同行的图重新设计的，其余是按这件商品做的介绍图` : '没有截图：全部是 AI 按品名和卖点做的介绍图。传几张自己的内容截图，图会真实很多'}</span>`}</div></div>
+          ${slotsOf(p).slice(1).map(([s, n]) => `<figure class="${S.busy[o + ':' + s] ? 'busy' : ''}"><canvas data-cv="${o}:${s}" width="1080" height="1080"></canvas><figcaption>${p.virt ? (S.ai[o + ':' + s] ? TYPE_NAME[effT(p, s)] || n : n) : (S.ai[o + ':' + s] ? {list:'场景 2', who:'场景 3', preview:'场景 4', flow:'场景 5', note:'场景 6'} : {list:'配件', who:'成色', preview:'拍摄', flow:'交易', note:'须知'})[s]}<button class="ib" data-dl="${o}:${s}" title="下载">${ic('down')}</button>${S.ai[o + ':' + s] ? '' : '<i class="tpl">模板图</i>'}</figcaption></figure>`).join('')}</div>
+        <div class="st-next">${!ikey() ? `<span class="b vio">${ic('alert')}没填生图密钥，现在是模板图</span>` : !S.ai[o + ':main'] ? `<span class="b">${ic('clock')}主图${S.busy[o + ':main'] ? '正在画' : '还没画出来'}</span><button class="btn" id="st-remain"${S.busy[o + ':main'] ? ' disabled' : ''}>${ic('sparkles')}画主图</button>` : slotsOf(p).slice(1).every(([sl]) => S.ai[o + ':' + sl]) ? `<span class="b reg">${ic('check')}这一套 ${slotsOf(p).length} 张图都画好了</span><button class="btn" id="st-remain">${ic('sparkles')}换一张主图</button>` : `<button class="btn acc" id="st-aiall"${slotsOf(p).slice(1).some(([sl]) => S.busy[o + ':' + sl]) ? ' disabled' : ''}>${ic('sparkles')}${refOf(p, 'main') ? `主图满意，把剩下 ${slotsOf(p).length - 1} 张副图也改出来` : '主图满意，按这个风格画 5 张副图'}</button><button class="btn" id="st-remain"${S.busy[o + ':main'] ? ' disabled' : ''}>${ic('sparkles')}不满意，换一张主图</button>`}</div>
+        <div class="row"><button class="btn" id="st-dlall">${ic('down')}下载 ${slotsOf(p).length} 张图</button>${!p.virt ? `<span class="b">${ic('camera')}瑕疵图请用你自己拍的原图，放在后面几张</span>` : `<span class="b wrapb">${ic('info')}${ownShots().length ? 'AI 图和你的真实截图混着排，每套的排法不一样；真实截图原样使用，不花出图费' : peerRefs().length ? `你带来 ${peerRefs().length} 张同行的图，这一套就出 ${peerN()} 张：每张都是在对应那张原图上直接改的，版式不动，换配色、字体和主图标题` : '没有截图：全部是 AI 按品名和卖点做的介绍图。传几张自己的内容截图，图会真实很多'}</span>`}</div></div>
       <div class="st-r">
         <div class="blk4"><h4>${ic('type')}标题<span class="cnt ${title.length > tl ? 'bad' : ''}">${title.length}/${tl}</span><span class="b lv ${tlint}">${LV[tlint]}</span><button class="ib" data-cp="st-title" title="复制">${ic('copy')}</button></h4><input id="st-title" class="tin" type="text" value="${esc(title)}" maxlength="60"></div>
         <div class="blk4"><h4>${ic('file')}说明<button class="ib" data-cp="st-desc" title="复制">${ic('copy')}</button></h4><textarea id="st-desc" rows="13">${esc(desc)}</textarea></div>
@@ -445,6 +452,7 @@
     const fig = () => { const cv = document.querySelector(`.st-d canvas[data-cv="${id}"]`); return cv && cv.closest('figure'); };
     S.busy[id] = 1; const f0 = fig(); if (f0) f0.classList.add('busy');
     try {
+      if (p.virt && slot !== 'main') await refAr(refOf(p, slot));
       const job = imgJob(p, slot), url = await genImage(job.prompt, job.refs, job.size); let img, taint = false;
       try { img = await loadImg(url, true); } catch (e) { img = await loadImg(url, false); taint = true; }
       IMGC[ick(p, slot)] = {img, url, taint}; if (plansCache.key === key) S.ai[id] = IMGC[ick(p, slot)];
@@ -481,7 +489,7 @@
     const plans = plansCache.v, key = plansCache.key; if (!plans || !S.runId || S.run !== key) return;
     try {
       const images = {}; let thumb = '';
-      for (let i = 0; i < plans.length; i++) for (const [sl] of SLOTS) { const id = i + ':' + sl, a = S.ai[id]; if (!a) continue; if (!a.blob && !a.taint) a.blob = await imgBlob(a.img); images[id] = {url:a.url, blob:a.blob || null}; }
+      for (let i = 0; i < plans.length; i++) for (const [sl] of ALLS) { const id = i + ':' + sl, a = S.ai[id]; if (!a) continue; if (!a.blob && !a.taint) a.blob = await imgBlob(a.img); images[id] = {url:a.url, blob:a.blob || null}; }
       const m = S.ai['0:main'] || Object.values(S.ai)[0];
       if (m) { try { const c = document.createElement('canvas'); c.width = c.height = 240; const w = m.img.naturalWidth || 1, h = m.img.naturalHeight || 1, k = Math.min(w, h); c.getContext('2d').drawImage(m.img, (w - k) / 2, 0, k, k, 0, 0, 240, 240); thumb = c.toDataURL('image/jpeg', .8); } catch (e) { thumb = /^https?:/.test(m.url) ? m.url : ''; } }
       const rec = {id:S.runId, at:S.runAt, key, q:state.q, platform:state.platform, n:S.n, virt:plans[0].virt, par:{kind:S.kind, ck:S.ck, fk:S.fk, cond:S.cond, pts:S.pts, price:S.price, chan:S.chan, info:S.info}, aiItems:S.aiItems && S.aiItems.key === key ? S.aiItems.it : null, mix:S.mix, refs:S.refs, samp:S.samp, comp:S.comp, edits:plans.map((p, i) => S.edits[key + i] || null), title:(S.edits[key + '0'] || {}).title || plans[0].title, images, thumb};
@@ -510,7 +518,7 @@
     const units = (G.text === 'skip' || G.text === 'nokey' ? 0 : 1) + G.imgT, fin = (G.text === 'ok' || G.text === 'fail' ? 1 : 0) + G.imgD + G.imgF, sec = Math.round(((G.on ? Date.now() : G.t1) - G.t0) / 1000);
     const pct = !units ? 100 : G.on ? Math.min(97, Math.round((fin + (units - fin) * Math.min(.8, sec / 120)) / units * 100)) : 100;
     const tx = {run:['run', 'DeepSeek 正在写标题和说明'], ok:['ok', '标题和说明已写好（' + G.textMsg + '通过检查）'], fail:['fail', '文案失败：' + G.textMsg], skip:['ok', G.sub ? '文案不变' : '文案已是你改过的版本'], nokey:['fail', '没填 DeepSeek 密钥，文案是模板稿']}[G.text];
-    const im = !G.imgT ? (ikey() ? ['ok', '主图已生成过'] : ['fail', '没填生图密钥，图片是模板图']) : G.imgD + G.imgF < G.imgT ? ['run', G.full ? `正在画全套图 ${G.imgD}/${G.imgT} 张（先主图，再按主图风格画副图）` : G.sub ? `正在画第 ${G.sub} 套的副图 ${G.imgD}/${G.imgT} 张` : `正在画主图 ${G.imgD}/${G.imgT} 张（每套 1 张）`] : G.imgF ? ['fail', `图片完成 ${G.imgD}/${G.imgT} 张，${G.imgF} 张失败：${G.imgMsg}`] : ['ok', G.full ? `全套 ${G.imgT} 张图已画好，图上的字已检查` : G.sub ? `第 ${G.sub} 套的 ${G.imgT} 张副图已画好` : `${G.imgT} 张主图已画好，图上的字已检查。看中哪一套，再点「画 5 张副图」`];
+    const im = !G.imgT ? (ikey() ? ['ok', '主图已生成过'] : ['fail', '没填生图密钥，图片是模板图']) : G.imgD + G.imgF < G.imgT ? ['run', G.full ? `正在画全套图 ${G.imgD}/${G.imgT} 张（先主图，再按主图风格画副图）` : G.sub ? `正在画第 ${G.sub} 套的副图 ${G.imgD}/${G.imgT} 张` : `正在画主图 ${G.imgD}/${G.imgT} 张（每套 1 张）`] : G.imgF ? ['fail', `图片完成 ${G.imgD}/${G.imgT} 张，${G.imgF} 张失败：${G.imgMsg}`] : ['ok', G.full ? `全套 ${G.imgT} 张图已画好，图上的字已检查` : G.sub ? `第 ${G.sub} 套的 ${G.imgT} 张副图已画好` : `${G.imgT} 张主图已画好，图上的字已检查。看中哪一套，再点主图下面的按钮出副图`];
     return `<section id="st-gen" class="gen ${G.on ? 'on' : 'fin'}"><div class="gen-h"><b>${ic(G.on ? 'sparkles' : 'check')}${G.on ? (G.full ? '正在生成全套：先写文案，再画主图和副图' : '正在生成：先写文案，再画每套的主图') : '生成完成'}</b><span>${pct}% · ${G.on ? '已用' : '用时'} ${sec} 秒</span></div>
       <div class="gen-bar"><i style="width:${pct}%"></i></div>
       <div class="gen-steps"><span class="${tx[0]}">${ic('type')}${esc(tx[1])}</span><span class="${im[0]}">${ic('image')}${esc(im[1])}</span></div></section>`;
@@ -520,7 +528,7 @@
     const plans = plansCache.v, virt = plans[0].virt, o = S.open;
     const ids = ikey() && (virt || S.refs.length) ? plans.map((p, i) => i + ':main').filter(id => !S.ai[id] && !S.busy[id]) : [];
     const edited = Object.keys(S.edits).some(k => k.startsWith(key));
-    const full = !!S.full && ids.length > 0, subOf = i => SLOTS.slice(1).map(([sl]) => i + ':' + sl).filter(id => !S.ai[id] && !S.busy[id]);
+    const full = !!S.full && ids.length > 0, subOf = i => slotsOf(plans[i]).slice(1).map(([sl]) => i + ':' + sl).filter(id => !S.ai[id] && !S.busy[id]);
     Object.assign(G, {key, sub:0, full, on:true, done:false, text:edited ? 'skip' : tkey() ? 'run' : 'nokey', textMsg:'', imgMsg:'', imgT:ids.length + (full ? plans.reduce((n, p, i) => n + subOf(i).length, 0) : 0), imgD:0, imgF:0, t0:Date.now()});
     clearInterval(G.timer); G.timer = setInterval(() => { if (G.on && state.p === 'pick') genUpd(); }, 1000); genUpd();
     const jobs = []; if (G.text === 'run') { const ok = await aiText(true); if (G.key !== key) return; G.text = ok ? 'ok' : 'fail'; if (!ok && !G.textMsg) G.textMsg = 'AI 写的没通过检查'; genUpd(); }
@@ -540,14 +548,14 @@
   async function aiImageAll() {
     const o = S.open, b = $('st-aiall'); if (!ikey()) { aiModal(); return toast('先填生图密钥'); }
     if (!S.ai[o + ':main']) return toast('先等主图画出来');
-    const ids = SLOTS.slice(1).map(([s]) => o + ':' + s).filter(id => !S.ai[id] && !S.busy[id]); if (!ids.length) return;
+    const ids = slotsOf(plansCache.v[o]).slice(1).map(([s]) => o + ':' + s).filter(id => !S.ai[id] && !S.busy[id]); if (!ids.length) return;
     if (b) b.disabled = true; const key = plansCache.key;
     Object.assign(G, {key, full:false, on:true, done:false, text:'skip', imgT:ids.length, imgD:0, imgF:0, imgMsg:'', t0:Date.now(), sub:o + 1});
     clearInterval(G.timer); G.timer = setInterval(() => { if (G.on && state.p === 'pick') genUpd(); }, 1000); genUpd(); ids.forEach(id => { S.busy[id] = 1; });
     await Promise.all(ids.map(id => aiImage(id, true).then(ok => { if (G.key === key) { ok ? G.imgD++ : G.imgF++; genUpd(); } })));
     if (G.key !== key) return; G.on = false; G.done = true; G.t1 = Date.now(); clearInterval(G.timer); render(); toast(`副图完成 ${G.imgD}/${ids.length} 张`);
   }
-  async function reMain() { const o = S.open, id = o + ':main', p = plansCache.v[o]; if (!ikey()) { aiModal(); return toast('先填生图密钥'); } delete S.ai[id]; delete IMGC[ick(p, 'main')]; SLOTS.slice(1).forEach(([sl]) => { delete S.ai[o + ':' + sl]; delete IMGC[ick(p, sl)]; }); if (S.mix && S.mix.r) Object.assign(S.mix.r, mixOne(o, p.virt)); S.busy[id] = 1; render(); toast('正在换一张主图，约 1 分钟'); await aiImage(id, true); render(); }
+  async function reMain() { const o = S.open, id = o + ':main', p = plansCache.v[o]; if (!ikey()) { aiModal(); return toast('先填生图密钥'); } delete S.ai[id]; delete IMGC[ick(p, 'main')]; ALLS.slice(1).forEach(([sl]) => { delete S.ai[o + ':' + sl]; delete IMGC[ick(p, sl)]; }); if (S.mix && S.mix.r) Object.assign(S.mix.r, mixOne(o, p.virt)); S.busy[id] = 1; render(); toast('正在换一张主图，约 1 分钟'); await aiImage(id, true); render(); }
 
   // ---------- 事件 ----------
   // 信息框分两段：「【参考商品】」之前是卖家自己写的（当事实用），之后是带过来的同行商品（只当参考）
@@ -573,9 +581,9 @@
     desc = desc.slice(0, 1500);
     const setQ = !!title && !q, q2 = setQ ? title : q;                                   // 标题放到最上面的「卖什么」；已经填了品名就不覆盖
     if (desc || o.price) { const el = $('st-info'); if (el) S.info = el.value; S.info = (infoParts()[0].trimEnd() + '\n\n【参考商品】' + (o.price ? '\n价格：' + String(o.price).replace(/[^\d.]/g, '') + ' 元' : '') + (desc ? '\n' + desc : '')).trim().slice(0, 6000); infoDerive(); }
-    const urls = (Array.isArray(o.images) ? o.images : []).filter(u => /^https:\/\//.test(u)).slice(0, 4); let n = 0;
+    const urls = (Array.isArray(o.images) ? o.images : []).filter(u => /^https:\/\//.test(u)).slice(0, 9); let n = 0;
     if (phys) { for (const u of urls) { if (S.photos.length >= 4) break; try { S.photos.push(await loadImg(u, false)); S.refs.push(u); n++; } catch (err) {} } }
-    else { const room = Math.max(0, 4 - S.samp.length); S.samp.push(...urls.slice(0, room)); n = Math.min(urls.length, room); }
+    else { const room = Math.max(0, 9 - S.samp.length); S.samp.push(...urls.slice(0, room)); n = Math.min(urls.length, room); }
     go({p:'pick', q:q2}); render(); const got = [setQ && '标题填到了「卖什么」', !setQ && title && '「卖什么」已有内容，标题没覆盖', desc && '说明进了信息框', n && n + ' 张图进了参考图'].filter(Boolean); toast(got.length ? '已带入：' + got.join('，') : '这段内容里没有读到标题、说明和图片');
   }
   const toRef = im => { const k = Math.min(1, 1280 / Math.max(im.naturalWidth, im.naturalHeight)), c = document.createElement('canvas'); c.width = Math.round(im.naturalWidth * k); c.height = Math.round(im.naturalHeight * k); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); return c.toDataURL('image/jpeg', .88); };
@@ -586,8 +594,8 @@
     Promise.all(fs.map(f => new Promise(ok => { const img = new Image(); img.onload = () => ok(img); img.onerror = () => ok(null); img.src = URL.createObjectURL(f); }))).then(imgs => {
       imgs = imgs.filter(Boolean); let over = false;
       if (bk === 'photos') { const all = [...(replace ? [] : S.photos), ...imgs]; over = all.length > 4; S.photos = all.slice(0, 4); S.refs = S.photos.map(toRef); S.kind = 'physical'; }
-      else { const all = [...(replace ? [] : S[bk]), ...imgs.map(toRef)]; over = all.length > 4; S[bk] = all.slice(0, 4); }
-      S.bucket = bk; stSync(); toast(over ? '最多 4 张，已保留前 4 张' : `已加入参考图，共 ${(bk === 'photos' ? S.refs : S[bk]).length} 张`);
+      else { const all = [...(replace ? [] : S[bk]), ...imgs.map(toRef)]; over = all.length > 9; S[bk] = all.slice(0, 9); }
+      S.bucket = bk; stSync(); toast(over ? `最多 ${bk === 'photos' ? 4 : 9} 张，已保留前面的` : `已加入参考图，共 ${(bk === 'photos' ? S.refs : S[bk]).length} 张`);
     });
   }
   document.addEventListener('paste', e => { if (state.p !== 'pick') return; const tx = e.clipboardData ? e.clipboardData.getData('text') : ''; if (tx && /"sjb"\s*:\s*"item"/.test(tx)) { let o = null; try { o = JSON.parse(tx.slice(tx.indexOf('{'), tx.lastIndexOf('}') + 1)); } catch (err) {} if (o && o.sjb === 'item') { e.preventDefault(); return itemIn(o); } } const fs = [...((e.clipboardData && e.clipboardData.items) || [])].filter(it => it.kind === 'file' && /^image\//.test(it.type)).map(it => it.getAsFile()); if (!fs.length) return; e.preventDefault(); addPhotos(fs, false); });
